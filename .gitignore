@@ -1,0 +1,63 @@
+# Файлы с темами и требованиями
+*.pdf
+
+# Общие игнорируемые файлы
+*.o
+*.a
+*.so
+*.dll
+*.dylib
+*.exe
+
+# Файлы для сборки и компиляции
+/build/
+/bin/
+/obj/
+/lib/
+/CMakeFiles/
+/CMakeCache.txt
+Makefile
+cmake_install.cmake
+
+# Логи и временные файлы
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+*.orig
+*.rej
+
+# Системные файлы
+.DS_Store
+Thumbs.db
+
+# Конфигурационные файлы IDE
+*.code-workspace
+.idea/
+/.vscode/
+/*.iml
+
+# Игнорирование файлов QtCreator
+*.pro.user
+*.qmake.stash
+*.qmake.cache
+
+# Файлы CMake
+CMakeLists.txt.user
+
+# Файлы для Windows
+*.obj
+*.pdb
+*.ilk
+*.vcxproj*
+*.sln
+*.vscode
+*.user
+*.log
+
+# Файлы для Ubuntu
+*.out
+*.~*~
+*.autosave
+*.gch
