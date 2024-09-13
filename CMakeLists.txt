@@ -9,8 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 # Добавить директории с исходным кодом
 add_executable(FamilyBudget main.cpp)
 
-
-# Добавить поддержку MySQL
+include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # Найти библиотеку MySQL
 find_library(MYSQL_LIB mysqlclient HINTS /usr/lib /usr/lib/x86_64-linux-gnu /lib/x86_64-linux-gnu/)
@@ -18,17 +17,13 @@ find_library(MYSQL_LIB mysqlclient HINTS /usr/lib /usr/lib/x86_64-linux-gnu /lib
 # Подключение заголовочных файлов MySQL
 include_directories(/usr/include/mysql /lib/x86_64-linux-gnu/)
 
-target_link_libraries(FamilyBudget ${MYSQL_LIB})
+# Подключение библиотеки OpenSSL
+find_package(OpenSSL REQUIRED)
 
+# Линковка основного приложения
+target_link_libraries(FamilyBudget ${MYSQL_LIB} OpenSSL::SSL)
 
+# Для выполнения тестов
+add_executable(UserTests tests/UserTests.cpp src/User.cpp src/UserRepository.cpp)
+target_link_libraries(UserTests gtest gtest_main pthread ${MYSQL_LIB} OpenSSL::SSL)
 
-# set(CMAKE_PREFIX_PATH "/lib/x86_64-linux-gnu/")
-# include_directories(/usr/include/mysql)
-
-# Найдите MySQL библиотеки вручную
-# find_library(MYSQL_LIB NAMES mysqlclient PATHS /lib/x86_64-linux-gnu/)
-# target_link_libraries(FamilyBudget ${MYSQL_LIB})
-
-# Добавить поддержку Qt, если собираете оконную версию
-# find_package(Qt5 COMPONENTS Widgets REQUIRED)
-# target_link_libraries(FamilyBudget Qt5::Widgets)
