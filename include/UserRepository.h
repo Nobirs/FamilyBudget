@@ -16,11 +16,14 @@ private:
     MYSQL *conn;
 
 public:
+    UserRepository();
     UserRepository(MYSQL *connection);
+    ~UserRepository();
 
     bool addUser(const User &user);
     User getUserByUsername(const string &username);
     vector<User> getAllUsers();
+    void clearUsersTable();
 };
 
 #endif

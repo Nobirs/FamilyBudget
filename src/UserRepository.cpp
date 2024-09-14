@@ -2,6 +2,20 @@
 #include <iostream>
 
 
+UserRepository::UserRepository() {
+    conn = mysql_init(nullptr);
+    if (conn == nullptr) {
+        cerr << "mysql_init() failed\n";
+        return;
+    }
+
+    if (mysql_real_connect(conn, "localhost", "alex", "0811Hades", "family_budget", 0, nullptr, 0) == nullptr) {
+        cerr << "mysql_real_connect() failed\n";
+        mysql_close(conn);
+        return;
+    }
+}
+
 UserRepository::UserRepository(MYSQL *connection) : conn(connection) {}
 
 
@@ -64,4 +78,23 @@ vector<User> UserRepository::getAllUsers() {
 
     mysql_free_result(result);
     return users;
+}
+
+void UserRepository::clearUsersTable() {
+    if (conn) {
+        const char* query = "DELETE FROM users";
+        
+        if (mysql_query(conn, query)) {
+            cerr << "Error clearing users table: " << mysql_error(conn) << std::endl;
+        } else {
+            cout << "Users table cleared successfully." << std::endl;
+        }
+    } else {
+        cerr << "MySQL connection is not established." << std::endl;
+    }
+}
+
+
+UserRepository::~UserRepository() {
+    if(conn != NULL) mysql_close(conn);
 }
