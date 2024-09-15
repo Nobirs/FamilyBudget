@@ -37,6 +37,25 @@ bool UserRepository::addUser(const User &user) {
     return true;
 }
 
+bool UserRepository::deleteUser(const string &username) {
+    string query = "DELETE FROM users WHERE username = '" + username + "'";
+    if(mysql_query(conn, query.c_str())) {
+        cerr << "Error deleting user: " << mysql_error(conn) << std::endl;
+        return false;
+    }
+    return true;
+}
+
+bool UserRepository::resetPassword(const string &username, const string &newPassword) {
+    string passwordHash = User::hashPassword(newPassword);
+    string query = "UPDATE users SET password_hash = '" + passwordHash + "' WHERE username = '" + username + "'";
+    if(mysql_query(conn, query.c_str())) {
+        cerr << "Error resetting password: " << mysql_error(conn) << std::endl;
+        return false;
+    }
+    return true;
+}
+
 User UserRepository::getUserByUsername(const std::string &username) {
     string query = "SELECT username, password_hash, role FROM users WHERE username = '" + username + "'";
     mysql_query(conn, query.c_str());

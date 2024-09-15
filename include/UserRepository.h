@@ -21,6 +21,8 @@ public:
     ~UserRepository();
 
     bool addUser(const User &user);
+    bool deleteUser(const string &username);
+    bool resetPassword(const string &username, const string &newPassword);
     User getUserByUsername(const string &username);
     vector<User> getAllUsers();
     void clearUsersTable();

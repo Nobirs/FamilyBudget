@@ -68,6 +68,24 @@ TEST_F(UserRepositoryTests, DuplicateUserTest) {
     EXPECT_FALSE(result);
 }
 
+TEST_F(UserRepositoryTests, DeleteUserTest) {
+    UserRepository userRepository;
+    User user("testUser", "testPassword", UserRole::USER);
+    userRepository.addUser(user);
+    
+    ASSERT_TRUE(userRepository.deleteUser("testUser"));
+    ASSERT_THROW(userRepository.getUserByUsername("testUser"), std::runtime_error);
+}
+
+TEST_F(UserRepositoryTests, ResetPasswordTest) {
+    UserRepository userRepository;
+    User user("testUser", "testPassword", UserRole::USER);
+    userRepository.addUser(user);
+    
+    ASSERT_TRUE(userRepository.resetPassword("testUser", "newPassword"));
+    User updatedUser = userRepository.getUserByUsername("testUser");
+    ASSERT_TRUE(updatedUser.authenticate("newPassword"));
+}
 
 
 int main(int argc, char **argv) {
