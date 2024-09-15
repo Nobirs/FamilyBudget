@@ -32,7 +32,7 @@ private:
     UserRole role;
 
     User();
-    string hashPassword(const string &password) const;
+    static string hashPassword(const string &password);
     static User createUser(const string &username, const string &passwordHash, UserRole role);
 
 public:
@@ -40,6 +40,7 @@ public:
     const string &getUsername() const;
     bool authenticate(const string &inputPassword) const;
     UserRole getRole() const;
+    static bool isAdmin(const User &user);
     const string &getPasswordHash() const;
     void changePassword(const string &newPassword);
 

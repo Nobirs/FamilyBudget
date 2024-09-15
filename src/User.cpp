@@ -7,7 +7,7 @@ User::User(){
     role = UserRole::USER;
 }
 
-string User::hashPassword(const string &password) const {
+string User::hashPassword(const string &password) {
     unsigned char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;
     SHA256_Init(&sha256);
@@ -28,6 +28,10 @@ User User::createUser(const string &username, const string &passwordHash, UserRo
     user.role = role;
     return user;
 
+}
+
+bool User::isAdmin(const User &user) {
+    return user.role == UserRole::ADMIN;
 }
 
 User::User(const string &username, const string &password, UserRole role)
