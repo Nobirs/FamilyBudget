@@ -87,6 +87,27 @@ TEST_F(UserRepositoryTests, ResetPasswordTest) {
     ASSERT_TRUE(updatedUser.authenticate("newPassword"));
 }
 
+TEST_F(UserRepositoryTests, UpdateUsernameTest) {
+    UserRepository userRepository;
+    User user("oldUser", "testPassword", UserRole::USER);
+    userRepository.addUser(user);
+    
+    ASSERT_TRUE(userRepository.updateUsername("oldUser", "newUser"));
+    User updatedUser = userRepository.getUserByUsername("newUser");
+    ASSERT_EQ(updatedUser.getUsername(), "newUser");
+}
+
+TEST_F(UserRepositoryTests, UpdateUserRoleTest) {
+    UserRepository userRepository;
+    User user("testUser", "testPassword", UserRole::USER);
+    userRepository.addUser(user);
+    
+    ASSERT_TRUE(userRepository.updateUserRole("testUser", UserRole::ADMIN));
+    User updatedUser = userRepository.getUserByUsername("testUser");
+    ASSERT_EQ(updatedUser.getRole(), UserRole::ADMIN);
+}
+
+
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);

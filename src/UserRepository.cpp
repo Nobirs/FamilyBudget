@@ -56,6 +56,30 @@ bool UserRepository::resetPassword(const string &username, const string &newPass
     return true;
 }
 
+bool UserRepository::updateUsername(const string &oldUsername, const string &newUsername) {
+    string query = "UPDATE users SET username = '" + newUsername + "' WHERE username = '" + oldUsername + "'";
+    
+    if (mysql_query(conn, query.c_str())) {
+        cerr << "Error updating username: " << mysql_error(conn) << std::endl;
+        return false;
+    }
+    return true;
+}
+
+bool UserRepository::updateUserRole(const string &username, UserRole newRole) {
+    string roleStr = "USER";
+    if (newRole == UserRole::ADMIN) roleStr = "ADMIN";
+    else if (newRole == UserRole::FAMILY_MEMBER) roleStr = "FAMILY_MEMBER";
+
+    string query = "UPDATE users SET role = '" + roleStr + "' WHERE username = '" + username + "'";
+    
+    if (mysql_query(conn, query.c_str())) {
+        cerr << "Error updating user role: " << mysql_error(conn) << std::endl;
+        return false;
+    }
+    return true;
+}
+
 User UserRepository::getUserByUsername(const std::string &username) {
     string query = "SELECT username, password_hash, role FROM users WHERE username = '" + username + "'";
     mysql_query(conn, query.c_str());
