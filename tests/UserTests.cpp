@@ -69,7 +69,6 @@ TEST_F(UserRepositoryTests, DuplicateUserTest) {
 }
 
 TEST_F(UserRepositoryTests, DeleteUserTest) {
-    UserRepository userRepository;
     User user("testUser", "testPassword", UserRole::USER);
     userRepository.addUser(user);
     
@@ -78,7 +77,6 @@ TEST_F(UserRepositoryTests, DeleteUserTest) {
 }
 
 TEST_F(UserRepositoryTests, ResetPasswordTest) {
-    UserRepository userRepository;
     User user("testUser", "testPassword", UserRole::USER);
     userRepository.addUser(user);
     
@@ -88,7 +86,6 @@ TEST_F(UserRepositoryTests, ResetPasswordTest) {
 }
 
 TEST_F(UserRepositoryTests, UpdateUsernameTest) {
-    UserRepository userRepository;
     User user("oldUser", "testPassword", UserRole::USER);
     userRepository.addUser(user);
     
@@ -98,13 +95,23 @@ TEST_F(UserRepositoryTests, UpdateUsernameTest) {
 }
 
 TEST_F(UserRepositoryTests, UpdateUserRoleTest) {
-    UserRepository userRepository;
     User user("testUser", "testPassword", UserRole::USER);
     userRepository.addUser(user);
     
     ASSERT_TRUE(userRepository.updateUserRole("testUser", UserRole::ADMIN));
     User updatedUser = userRepository.getUserByUsername("testUser");
     ASSERT_EQ(updatedUser.getRole(), UserRole::ADMIN);
+}
+
+TEST_F(UserRepositoryTests, AddSameUserTwice) {
+    User user1("testUser", "testPassword", UserRole::USER);
+    User user2("testUser", "testPassword", UserRole::USER);
+
+    // Add first User -> success
+    ASSERT_TRUE(userRepository.addUser(user1));
+    // Add second User -> must fail cause username should be unique
+    ASSERT_FALSE(userRepository.addUser(user2));
+
 }
 
 
