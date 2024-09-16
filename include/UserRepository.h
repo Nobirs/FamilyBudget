@@ -28,6 +28,9 @@ public:
     User getUserByUsername(const string &username);
     vector<User> getAllUsers();
     void clearUsersTable();
+
+    bool updateEmail(const string &username, const string &newEmail);
+    bool updateBudgetLimit(const string &username, double newLimit);
 };
 
 #endif

@@ -27,8 +27,9 @@ bool UserRepository::addUser(const User &user) {
         case UserRole::FAMILY_MEMBER: role = "FAMILY_MEMBER"; break;
         default: role = "USER";
     }
-    string query = "INSERT INTO users (username, password_hash, role) VALUES ('" +
-        user.getUsername() + "', '" + user.getPasswordHash() + "', '" + role + "')";
+    string query = "INSERT INTO users (username, password_hash, role, email, last_login, financial_role, budget_limit, family_status) VALUES ('" +
+        user.username + "', '" + user.passwordHash + "', '" + role + "', '" + user.email + "', '" + user.getLastLoginStr() + "', '" + 
+        user.financialRole + "', '" + std::to_string(user.budgetLimit) + "', '" + user.familyStatus + "')";
     
     if (mysql_query(conn, query.c_str())) {
         cerr << "Failed to insert user: " << mysql_error(conn) << std::endl;
@@ -81,20 +82,37 @@ bool UserRepository::updateUserRole(const string &username, UserRole newRole) {
 }
 
 User UserRepository::getUserByUsername(const std::string &username) {
-    string query = "SELECT username, password_hash, role FROM users WHERE username = '" + username + "'";
+    string query = "SELECT username, password_hash, role, email, registration_date, last_login, financial_role, budget_limit, family_status FROM users WHERE username = '" + username + "'";
     mysql_query(conn, query.c_str());
     MYSQL_RES *result = mysql_store_result(conn);
     MYSQL_ROW row = mysql_fetch_row(result);
 
     if (row) {
-        string role = row[2];
+        string username = row[0];
+        string passwordHash = row[1];
 
+        string role = row[2];
         UserRole userRole = UserRole::USER;
         if (role == "ADMIN") userRole = UserRole::ADMIN;
         else if (role == "FAMILY_MEMBER") userRole = UserRole::FAMILY_MEMBER;
+        
+        string email = row[3];
 
-        User user = User::createUser(row[0], row[1], userRole);
-        mysql_free_result(result);
+
+        // Преобразование строки в time_t (registration_date)
+        std::tm tmReg = {};
+        strptime(row[4], "%Y-%m-%d %H:%M:%S", &tmReg);
+        time_t registrationDate = std::mktime(&tmReg);
+
+        std::tm tmLogin = {};
+        strptime(row[5], "%Y-%m-%d %H:%M:%S", &tmLogin);
+        time_t lastLogin = std::mktime(&tmLogin);
+
+        string financialRole = row[6];
+        double budgetLimit = std::stod(row[7]);
+        string familyStatus = row[8];
+
+        User user = User::createUser(username, passwordHash, userRole, email, registrationDate, financialRole, budgetLimit, familyStatus);
         return user;
     }
 
@@ -103,19 +121,38 @@ User UserRepository::getUserByUsername(const std::string &username) {
 }
 
 vector<User> UserRepository::getAllUsers() {
-    string query = "SELECT username, password_hash, role FROM users";
+    string query = "SELECT username, password_hash, role, email, registration_date, last_login, financial_role, budget_limit, family_status FROM users";
     mysql_query(conn, query.c_str());
     MYSQL_RES *result = mysql_store_result(conn);
     MYSQL_ROW row;
     vector<User> users;
 
     while ((row = mysql_fetch_row(result))) {
-        string role = row[2];
+        string username = row[0];
+        string passwordHash = row[1];
 
+        string role = row[2];
         UserRole userRole = UserRole::USER;
         if (role == "ADMIN") userRole = UserRole::ADMIN;
         else if (role == "FAMILY_MEMBER") userRole = UserRole::FAMILY_MEMBER;
-        User user = User::createUser(row[0], row[1], userRole);
+        
+        string email = row[3];
+
+
+        // Преобразование строки в time_t (registration_date)
+        std::tm tmReg = {};
+        strptime(row[4], "%Y-%m-%d %H:%M:%S", &tmReg);
+        time_t registrationDate = std::mktime(&tmReg);
+
+        std::tm tmLogin = {};
+        strptime(row[5], "%Y-%m-%d %H:%M:%S", &tmLogin);
+        time_t lastLogin = std::mktime(&tmLogin);
+
+        string financialRole = row[6];
+        double budgetLimit = std::stod(row[7]);
+        string familyStatus = row[8];
+
+        User user = User::createUser(username, passwordHash, userRole, email, registrationDate, financialRole, budgetLimit, familyStatus);
         users.push_back(user);
     }
 
@@ -135,6 +172,29 @@ void UserRepository::clearUsersTable() {
     } else {
         cerr << "MySQL connection is not established." << std::endl;
     }
+}
+
+bool UserRepository::updateEmail(const string &username, const string &newEmail) {
+    if (!User::isValidEmail(newEmail)) {
+        std::cerr << "Invalid email format" << std::endl;
+        return false;
+    }
+
+    string query = "UPDATE users SET email = '" + newEmail + "' WHERE username = '" + username + "'";
+    if (mysql_query(conn, query.c_str())) {
+        std::cerr << "MySQL query error: " << mysql_error(conn) << std::endl;
+        return false;
+    }
+    return true;
+}
+
+bool UserRepository::updateBudgetLimit(const string &username, double newLimit) {
+    string query = "UPDATE users SET budget_limit = '" + std::to_string(newLimit) + "' WHERE username = '" + username + "'";
+    if (mysql_query(conn, query.c_str())) {
+        std::cerr << "MySQL query error: " << mysql_error(conn) << std::endl;
+        return false;
+    }
+    return true;
 }
 
 

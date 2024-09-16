@@ -3,14 +3,14 @@
 #include "UserRepository.h"
 
 TEST(UserTest, AuthenticateUser) {
-    User user("testuser", "password", UserRole::USER);
+    User user("testuser", "password", UserRole::USER, "test@gmail.com");
 
     ASSERT_TRUE(user.authenticate("password"));
     ASSERT_FALSE(user.authenticate("wrongpassword"));
 }
 
 TEST(UserTest, ChangePassword) {
-    User user("testuser", "password", UserRole::USER);
+    User user("testuser", "password", UserRole::USER, "test@gmail.com");
     user.changePassword("newpassword");
 
     ASSERT_TRUE(user.authenticate("newpassword"));
@@ -30,7 +30,7 @@ protected:
 
 
 TEST_F(UserRepositoryTests, AddUserTest) {
-    User newUser("testUser", "testPassword", UserRole::USER);
+    User newUser("testUser", "testPassword", UserRole::USER, "test@gmail.com");
     userRepository.addUser(newUser);
     User fetchedUser = userRepository.getUserByUsername("testUser");
     
@@ -39,7 +39,7 @@ TEST_F(UserRepositoryTests, AddUserTest) {
 }
 
 TEST_F(UserRepositoryTests, GetUserByUsernameTest) {
-    User user("testUser", "testPassword", UserRole::USER);
+    User user("testUser", "testPassword", UserRole::USER, "test@gmail.com");
     userRepository.addUser(user);
     User retrievedUser = userRepository.getUserByUsername("testUser");
     
@@ -47,8 +47,8 @@ TEST_F(UserRepositoryTests, GetUserByUsernameTest) {
 }
 
 TEST_F(UserRepositoryTests, GetAllUsersTest) {
-    userRepository.addUser(User("user1", "password1", UserRole::USER));
-    userRepository.addUser(User("user2", "password2", UserRole::USER));
+    userRepository.addUser(User("user1", "password1", UserRole::USER, "test1@gmail.com"));
+    userRepository.addUser(User("user2", "password2", UserRole::USER, "test2@gmail.com"));
     vector<User> users = userRepository.getAllUsers();
     
     EXPECT_EQ(users.size(), 2);
@@ -61,7 +61,7 @@ TEST_F(UserRepositoryTests, GetNonExistingUserTest) {
 }
 
 TEST_F(UserRepositoryTests, DuplicateUserTest) {    
-    User user("duplicateUser", "password123", UserRole::USER);
+    User user("duplicateUser", "password123", UserRole::USER, "test@gmail.com");
     userRepository.addUser(user);
     bool result = userRepository.addUser(user);  // Modify addUser to return a boolean if successful
     
@@ -69,7 +69,7 @@ TEST_F(UserRepositoryTests, DuplicateUserTest) {
 }
 
 TEST_F(UserRepositoryTests, DeleteUserTest) {
-    User user("testUser", "testPassword", UserRole::USER);
+    User user("testUser", "testPassword", UserRole::USER, "test@gmail.com");
     userRepository.addUser(user);
     
     ASSERT_TRUE(userRepository.deleteUser("testUser"));
@@ -77,7 +77,7 @@ TEST_F(UserRepositoryTests, DeleteUserTest) {
 }
 
 TEST_F(UserRepositoryTests, ResetPasswordTest) {
-    User user("testUser", "testPassword", UserRole::USER);
+    User user("testUser", "testPassword", UserRole::USER, "test@gmail.com");
     userRepository.addUser(user);
     
     ASSERT_TRUE(userRepository.resetPassword("testUser", "newPassword"));
@@ -86,7 +86,7 @@ TEST_F(UserRepositoryTests, ResetPasswordTest) {
 }
 
 TEST_F(UserRepositoryTests, UpdateUsernameTest) {
-    User user("oldUser", "testPassword", UserRole::USER);
+    User user("oldUser", "testPassword", UserRole::USER, "test@gmail.com");
     userRepository.addUser(user);
     
     ASSERT_TRUE(userRepository.updateUsername("oldUser", "newUser"));
@@ -95,7 +95,7 @@ TEST_F(UserRepositoryTests, UpdateUsernameTest) {
 }
 
 TEST_F(UserRepositoryTests, UpdateUserRoleTest) {
-    User user("testUser", "testPassword", UserRole::USER);
+    User user("testUser", "testPassword", UserRole::USER, "test@gmail.com");
     userRepository.addUser(user);
     
     ASSERT_TRUE(userRepository.updateUserRole("testUser", UserRole::ADMIN));
@@ -104,8 +104,8 @@ TEST_F(UserRepositoryTests, UpdateUserRoleTest) {
 }
 
 TEST_F(UserRepositoryTests, AddSameUserTwice) {
-    User user1("testUser", "testPassword", UserRole::USER);
-    User user2("testUser", "testPassword", UserRole::USER);
+    User user1("testUser", "testPassword", UserRole::USER, "test1@gmail.com");
+    User user2("testUser", "testPassword", UserRole::USER, "test2@gmail.com");
 
     // Add first User -> success
     ASSERT_TRUE(userRepository.addUser(user1));
