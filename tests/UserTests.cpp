@@ -2,6 +2,7 @@
 #include "User.h"
 #include "UserRepository.h"
 
+
 TEST(UserTest, AuthenticateUser) {
     User user("testuser", "password", UserRole::USER, "test@gmail.com");
 
@@ -103,7 +104,7 @@ TEST_F(UserRepositoryTests, UpdateUserRoleTest) {
     ASSERT_EQ(updatedUser.getRole(), UserRole::ADMIN);
 }
 
-TEST_F(UserRepositoryTests, AddSameUserTwice) {
+TEST_F(UserRepositoryTests, AddSameUserTwiceTest) {
     User user1("testUser", "testPassword", UserRole::USER, "test1@gmail.com");
     User user2("testUser", "testPassword", UserRole::USER, "test2@gmail.com");
 
@@ -114,6 +115,23 @@ TEST_F(UserRepositoryTests, AddSameUserTwice) {
 
 }
 
+TEST_F(UserRepositoryTests, UpdateUserEmailTest) {
+    User user("testUser", "testPassword", UserRole::USER, "test1@gmail.com");
+    userRepository.addUser(user);
+    userRepository.updateEmail("testUser", "newEmail@gmail.com");
+    User updatedUser = userRepository.getUserByUsername("testUser");
+
+    ASSERT_EQ(updatedUser.getEmail(), "newEmail@gmail.com");
+}
+
+TEST_F(UserRepositoryTests, UpdateBudgetLimitTest) {
+    User user("testUser", "testPassword", UserRole::USER, "test1@gmail.com", "BUDGET_MANAGER", 1.0);
+    userRepository.addUser(user);
+    ASSERT_DOUBLE_EQ(userRepository.getUserByUsername("testUser").getBudgetLimit(), 1.0);
+    userRepository.updateBudgetLimit("testUser", 50000);
+    ASSERT_DOUBLE_EQ(userRepository.getUserByUsername("testUser").getBudgetLimit(), 50000);
+
+}
 
 
 int main(int argc, char **argv) {
