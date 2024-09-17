@@ -29,7 +29,7 @@ string User::hashPassword(const string &password) {
 
 User User::createUser(const string &username, const string &passwordHash, UserRole role, 
                         const string &email, time_t registrationDate, const string &financialRole, 
-                        double budgetLimit, const string& familyStatus){
+                        double budgetLimit, const string& familyStatus, int familyId){
     User user;
     user.username = username;
     user.passwordHash = passwordHash;
@@ -40,15 +40,16 @@ User User::createUser(const string &username, const string &passwordHash, UserRo
     user.financialRole = financialRole;
     user.budgetLimit = budgetLimit;
     user.familyStatus = familyStatus;
+    user.familyId = familyId;
     return user;
 
 }
 
 User::User(const string &username, const string &password, UserRole role, 
                         const string &email, const string &financialRole, 
-                        double budgetLimit, const string& familyStatus)
+                        double budgetLimit, const string& familyStatus, int familyId)
                         : username(username), role(role), financialRole(financialRole),
-                        budgetLimit(budgetLimit), familyStatus(familyStatus) {
+                        budgetLimit(budgetLimit), familyStatus(familyStatus), familyId(familyId) {
         this->passwordHash = hashPassword(password);
         this->setEmail(email);
         this->setRegistrationDate(time(nullptr));
@@ -97,6 +98,9 @@ void User::setBudgetLimit(double limit) {
 const string &User::getFamilyStatus() const { return this->familyStatus; }
 void User::setFamilyStatus(const string &status) { this->familyStatus = status; }
 
+int User::getFamilyId() const { return familyId; }
+void User::setFamilyId(int familyId) { this->familyId = familyId; }
+
 bool User::isAdmin(const User &user) { return user.role == UserRole::ADMIN; }
 
 bool User::isValidEmail(const string &email) {
@@ -113,5 +117,3 @@ bool User::authenticate(const string &inputPassword) const {
 void User::changePassword(const string &newPassword) {
     this->passwordHash = hashPassword(newPassword);
 }
-
-

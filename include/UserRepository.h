@@ -25,6 +25,7 @@ public:
     bool resetPassword(const string &username, const string &newPassword);
     bool updateUsername(const string &oldUsername, const string &newUsername);
     bool updateUserRole(const string &username, UserRole newRole);
+    bool updateUserFamilyId(const string &username, int newFamilyId);
     User getUserByUsername(const string &username);
     vector<User> getAllUsers();
     void clearUsersTable();

@@ -27,9 +27,9 @@ bool UserRepository::addUser(const User &user) {
         case UserRole::FAMILY_MEMBER: role = "FAMILY_MEMBER"; break;
         default: role = "USER";
     }
-    string query = "INSERT INTO users (username, password_hash, role, email, last_login, financial_role, budget_limit, family_status) VALUES ('" +
+    string query = "INSERT INTO users (username, password_hash, role, email, last_login, financial_role, budget_limit, family_status, family_id) VALUES ('" +
         user.username + "', '" + user.passwordHash + "', '" + role + "', '" + user.email + "', '" + user.getLastLoginStr() + "', '" + 
-        user.financialRole + "', '" + std::to_string(user.budgetLimit) + "', '" + user.familyStatus + "')";
+        user.financialRole + "', '" + std::to_string(user.budgetLimit) + "', '" + user.familyStatus + "', '" + std::to_string(user.familyId) + "')";
     
     if (mysql_query(conn, query.c_str())) {
         cerr << "Failed to insert user: " << mysql_error(conn) << std::endl;
@@ -81,8 +81,18 @@ bool UserRepository::updateUserRole(const string &username, UserRole newRole) {
     return true;
 }
 
+bool UserRepository::updateUserFamilyId(const string &username, int newFamilyId) {
+    string query = "UPDATE users SET family_id = '" + std::to_string(newFamilyId) + "' WHERE username = '" + username + "'";
+    
+    if(mysql_query(conn, query.c_str())) {
+        cerr << "Error updating user familyId: " << mysql_error(conn) << std::endl;
+        return false;
+    }
+    return true;
+}
+
 User UserRepository::getUserByUsername(const std::string &username) {
-    string query = "SELECT username, password_hash, role, email, registration_date, last_login, financial_role, budget_limit, family_status FROM users WHERE username = '" + username + "'";
+    string query = "SELECT username, password_hash, role, email, registration_date, last_login, financial_role, budget_limit, family_status, family_id FROM users WHERE username = '" + username + "'";
     mysql_query(conn, query.c_str());
     MYSQL_RES *result = mysql_store_result(conn);
     MYSQL_ROW row = mysql_fetch_row(result);
@@ -111,8 +121,9 @@ User UserRepository::getUserByUsername(const std::string &username) {
         string financialRole = row[6];
         double budgetLimit = std::stod(row[7]);
         string familyStatus = row[8];
+        int familyId = std::stoi(row[9]);
 
-        User user = User::createUser(username, passwordHash, userRole, email, registrationDate, financialRole, budgetLimit, familyStatus);
+        User user = User::createUser(username, passwordHash, userRole, email, registrationDate, financialRole, budgetLimit, familyStatus, familyId);
         return user;
     }
 
@@ -121,7 +132,7 @@ User UserRepository::getUserByUsername(const std::string &username) {
 }
 
 vector<User> UserRepository::getAllUsers() {
-    string query = "SELECT username, password_hash, role, email, registration_date, last_login, financial_role, budget_limit, family_status FROM users";
+    string query = "SELECT username, password_hash, role, email, registration_date, last_login, financial_role, budget_limit, family_status, family_id FROM users";
     mysql_query(conn, query.c_str());
     MYSQL_RES *result = mysql_store_result(conn);
     MYSQL_ROW row;
@@ -151,8 +162,9 @@ vector<User> UserRepository::getAllUsers() {
         string financialRole = row[6];
         double budgetLimit = std::stod(row[7]);
         string familyStatus = row[8];
+        int familyId = std::stoi(row[9]);
 
-        User user = User::createUser(username, passwordHash, userRole, email, registrationDate, financialRole, budgetLimit, familyStatus);
+        User user = User::createUser(username, passwordHash, userRole, email, registrationDate, financialRole, budgetLimit, familyStatus, familyId);
         users.push_back(user);
     }
 

@@ -40,17 +40,18 @@ private:
     string financialRole;  // For example: "BUDGET_MANAGER", "FAMILY_MEMBER"
     double budgetLimit;         // Budget limit for current user
     string familyStatus;   // For example: "FAMILY_HEAD", "CHILD"
+    int familyId;
 
     static string hashPassword(const string &password);
     static User createUser(const string &username, const string &passwordHash, UserRole role, 
                         const string &email, time_t registrationDate, const string &financialRole, 
-                        double budgetLimit, const string& familyStatus);
+                        double budgetLimit, const string& familyStatus, int familyId);
 
 public:
     User();
     User(const string &username, const string &passwordHash, UserRole role, 
                         const string &email, const string &financialRole="FAMILY_MEMBER", 
-                        double budgetLimit=0.0, const string& familyStatus="CHILD");
+                        double budgetLimit=0.0, const string& familyStatus="CHILD", int familyId=1);
 
     const string &getUsername() const;
     void setUsername(const string &newUsername);
@@ -77,6 +78,9 @@ public:
     
     const string &getFamilyStatus() const;
     void setFamilyStatus(const string &status);
+
+    int getFamilyId() const;
+    void setFamilyId(int familyId);
 
     static bool isAdmin(const User &user);
     static bool isValidEmail(const string &email);

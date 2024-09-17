@@ -130,7 +130,14 @@ TEST_F(UserRepositoryTests, UpdateBudgetLimitTest) {
     ASSERT_DOUBLE_EQ(userRepository.getUserByUsername("testUser").getBudgetLimit(), 1.0);
     userRepository.updateBudgetLimit("testUser", 50000);
     ASSERT_DOUBLE_EQ(userRepository.getUserByUsername("testUser").getBudgetLimit(), 50000);
+}
 
+TEST_F(UserRepositoryTests, UpdateFamilyIdTest) {
+    User user("testUser", "testPassword", UserRole::USER, "test@gmail.com", "BUDGET_MANAGER", 1.0, "HUSBAND", 2);
+    userRepository.addUser(user);
+    ASSERT_EQ(userRepository.getUserByUsername("testUser").getFamilyId(), 2);
+    userRepository.updateUserFamilyId("testUser", 15);
+    ASSERT_EQ(userRepository.getUserByUsername("testUser").getFamilyId(), 15);
 }
 
 
