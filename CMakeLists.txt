@@ -23,7 +23,29 @@ find_package(OpenSSL REQUIRED)
 # Линковка основного приложения
 target_link_libraries(FamilyBudget ${MYSQL_LIB} OpenSSL::SSL)
 
-# Для выполнения тестов
-add_executable(UserTests tests/UserTests.cpp src/User.cpp src/UserRepository.cpp)
-target_link_libraries(UserTests gtest gtest_main pthread ${MYSQL_LIB} OpenSSL::SSL)
+# Добавляем Google Test
+find_package(GTest REQUIRED)
+include_directories(${GTEST_INCLUDE_DIRS})
+# Указываем директории с исходниками
+include_directories(${CMAKE_SOURCE_DIR}/src)
 
+
+# Используем GLOB для поиска всех тестовых файлов
+file(GLOB TEST_SOURCES "${CMAKE_SOURCE_DIR}/tests/*.cpp")
+file(GLOB SRC_SOURCES "${CMAKE_SOURCE_DIR}/src/*.cpp")
+
+# Создаем исполняемый файл для всех тестов
+
+# Для выполнения тестов
+add_executable(UserTests tests/UserTests.cpp src/User.cpp)
+add_executable(TransactionTests tests/TransactionTests.cpp src/Transaction.cpp src/Category.cpp src/CategoryRepository.cpp)
+add_executable(UserRepositoryTests tests/UserRepositoryTests.cpp src/UserRepository.cpp src/User.cpp)
+add_executable(CategoryTests tests/CategoryTests.cpp src/CategoryRepository.cpp src/UserRepository.cpp src/Category.cpp src/User.cpp)
+add_executable(AllTests ${TEST_SOURCES} ${SRC_SOURCES})
+
+# Линкуем с Google Test и pthread
+target_link_libraries(UserTests gtest gtest_main pthread OpenSSL::SSL)
+target_link_libraries(TransactionTests gtest gtest_main pthread ${MYSQL_LIB})
+target_link_libraries(UserRepositoryTests gtest gtest_main pthread ${MYSQL_LIB} OpenSSL::SSL)
+target_link_libraries(CategoryTests gtest gtest_main pthread ${MYSQL_LIB} OpenSSL::SSL)
+target_link_libraries(AllTests gtest gtest_main pthread ${MYSQL_LIB} OpenSSL::SSL)
