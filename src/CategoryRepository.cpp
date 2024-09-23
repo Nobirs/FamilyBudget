@@ -117,9 +117,7 @@ Category CategoryRepository::getCategoryByCategoryIdFamilyId(int categoryId, int
         int id = std::stoi(row[0]);
         string name = row[1];
         string description = row[2];
-        cout << "Name: " + name << std::endl;
         Category existingCategory = Category::createCategory(id, name, description, familyId);
-        cout << "Name: " + existingCategory.getName() << std::endl;
         return existingCategory;
     }
     return category;
