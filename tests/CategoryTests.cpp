@@ -12,16 +12,12 @@ protected:
     CategoryRepository categoryRepository;
 
     void SetUp() override {
-        User user("testUser", "testPassword", UserRole::USER, "testEmail@gmail.com");
-        userRepository.addUser(user);
-
-    }
-
-    void TearDown() override {
         userRepository.clearUsersTable();
         categoryRepository.clearCategoryTable();
-    }
 
+        User user("testUser", "testPassword", UserRole::USER, "testEmail@gmail.com");
+        userRepository.addUser(user);
+    }
 };
 
 
