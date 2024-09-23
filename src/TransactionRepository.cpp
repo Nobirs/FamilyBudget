@@ -18,9 +18,9 @@ TransactionRepository::TransactionRepository(MYSQL *connection): conn(connection
 
 bool TransactionRepository::addTransaction(const Transaction &transaction) {
     string type = transaction.getType() == TransactionType::INCOME ? "INCOME" : "EXPENSE";
-    string query = "INSERT INTO transactions (description, amount, type, familyId, categoryId) VALUES ('" + 
+    string query = "INSERT INTO transactions (description, amount, type, user_id, family_id, category_id) VALUES ('" + 
                         transaction.getDescription() + "', " + std::to_string(transaction.getAmount()) + ", '" + type + "', '" +
-                        std::to_string(transaction.getFamilyId()) + "', '" + std::to_string(transaction.getCategoryId()) + "')";
+                        std::to_string(transaction.getUserId()) + "', '" + std::to_string(transaction.getFamilyId()) + "', '" + std::to_string(transaction.getCategoryId()) + "')";
 
     if (mysql_query(conn, query.c_str())) {
         cerr << "MySQL query error (addTransaction): " << mysql_error(conn) << std::endl;
@@ -42,7 +42,7 @@ bool TransactionRepository::deleteTransaction(int transactionId) {
 }
 
 vector<Transaction> TransactionRepository::getTransactionsByUserId(int userId) {
-    std::string query = "SELECT id, description, amount, date, type, category_id, family_id FROM transactions WHERE user_id = " + std::to_string(userId);
+    std::string query = "SELECT id, description, amount, date, type, user_id, category_id, family_id FROM transactions WHERE user_id = " + std::to_string(userId);
     mysql_query(conn, query.c_str());
     MYSQL_RES *result = mysql_store_result(conn);
 
@@ -58,10 +58,11 @@ vector<Transaction> TransactionRepository::getTransactionsByUserId(int userId) {
         time_t date = std::mktime(&tmReg);
 
         TransactionType type = (std::string(row[4]) == "INCOME") ? TransactionType::INCOME : TransactionType::EXPENSE;
-        int categoryId = std::stoi(row[5]);
-        int familyId = std::stoi(row[6]);
+        int userId = std::stoi(row[5]);
+        int categoryId = std::stoi(row[6]);
+        int familyId = std::stoi(row[7]);
 
-        Transaction transaction = Transaction::createTransaction(description, amount, date, type, familyId, categoryId);
+        Transaction transaction = Transaction::createTransaction(description, amount, date, type, userId, familyId, categoryId);
         transactions.push_back(transaction);
     }
 
@@ -70,7 +71,7 @@ vector<Transaction> TransactionRepository::getTransactionsByUserId(int userId) {
 }
 
 vector<Transaction> TransactionRepository::getTransactionsByFamilyId(int familyId) {
-    std::string query = "SELECT id, description, amount, date, type, category_id, family_id FROM transactions WHERE family_id = " + std::to_string(familyId);
+    std::string query = "SELECT id, description, amount, date, type, user_id, category_id, family_id FROM transactions WHERE family_id = " + std::to_string(familyId);
     mysql_query(conn, query.c_str());
     MYSQL_RES *result = mysql_store_result(conn);
 
@@ -86,10 +87,11 @@ vector<Transaction> TransactionRepository::getTransactionsByFamilyId(int familyI
         time_t date = std::mktime(&tmReg);
 
         TransactionType type = (std::string(row[4]) == "INCOME") ? TransactionType::INCOME : TransactionType::EXPENSE;
-        int categoryId = std::stoi(row[5]);
-        int familyId = std::stoi(row[6]);
+        int userId = std::stoi(row[5]);
+        int categoryId = std::stoi(row[6]);
+        int familyId = std::stoi(row[7]);
 
-        Transaction transaction = Transaction::createTransaction(description, amount, date, type, familyId, categoryId);
+        Transaction transaction = Transaction::createTransaction(description, amount, date, type, userId, familyId, categoryId);
         transactions.push_back(transaction);
     }
 
@@ -98,7 +100,7 @@ vector<Transaction> TransactionRepository::getTransactionsByFamilyId(int familyI
 }
 
 vector<Transaction> TransactionRepository::getTransactionByCategoryId(int categoryId) {
-    std::string query = "SELECT id, description, amount, date, type, category_id, family_id FROM transactions WHERE category_id = " + std::to_string(categoryId);
+    std::string query = "SELECT id, description, amount, date, type, user_id, category_id, family_id FROM transactions WHERE category_id = " + std::to_string(categoryId);
     mysql_query(conn, query.c_str());
     MYSQL_RES *result = mysql_store_result(conn);
 
@@ -114,10 +116,11 @@ vector<Transaction> TransactionRepository::getTransactionByCategoryId(int catego
         time_t date = std::mktime(&tmReg);
 
         TransactionType type = (std::string(row[4]) == "INCOME") ? TransactionType::INCOME : TransactionType::EXPENSE;
-        int categoryId = std::stoi(row[5]);
-        int familyId = std::stoi(row[6]);
+        int userId = std::stoi(row[5]);
+        int categoryId = std::stoi(row[6]);
+        int familyId = std::stoi(row[7]);
 
-        Transaction transaction = Transaction::createTransaction(description, amount, date, type, familyId, categoryId);
+        Transaction transaction = Transaction::createTransaction(description, amount, date, type, userId, familyId, categoryId);
         transactions.push_back(transaction);
     }
 
@@ -126,7 +129,7 @@ vector<Transaction> TransactionRepository::getTransactionByCategoryId(int catego
 }
 
 vector<Transaction> TransactionRepository::getTransactionByUserIdCategoryId(int userId, int categoryId) {
-    std::string query = "SELECT id, description, amount, date, type, category_id, family_id FROM transactions WHERE user_id = " + std::to_string(userId) + "AND category_id = " + std::to_string(categoryId);
+    std::string query = "SELECT id, description, amount, date, type, user_id, category_id, family_id FROM transactions WHERE user_id = " + std::to_string(userId) + "AND category_id = " + std::to_string(categoryId);
     mysql_query(conn, query.c_str());
     MYSQL_RES *result = mysql_store_result(conn);
 
@@ -142,10 +145,11 @@ vector<Transaction> TransactionRepository::getTransactionByUserIdCategoryId(int 
         time_t date = std::mktime(&tmReg);
 
         TransactionType type = (std::string(row[4]) == "INCOME") ? TransactionType::INCOME : TransactionType::EXPENSE;
-        int categoryId = std::stoi(row[5]);
-        int familyId = std::stoi(row[6]);
+        int userId = std::stoi(row[5]);
+        int categoryId = std::stoi(row[6]);
+        int familyId = std::stoi(row[7]);
 
-        Transaction transaction = Transaction::createTransaction(description, amount, date, type, familyId, categoryId);
+        Transaction transaction = Transaction::createTransaction(description, amount, date, type, userId, familyId, categoryId);
         transactions.push_back(transaction);
     }
 
@@ -154,7 +158,7 @@ vector<Transaction> TransactionRepository::getTransactionByUserIdCategoryId(int 
 }
 
 vector<Transaction> TransactionRepository::getTransactionByFamilyIdCategoryId(int familyId, int categoryId) {
-    std::string query = "SELECT id, description, amount, date, type, category_id, family_id FROM transactions WHERE family_id = " + std::to_string(familyId) + "AND category_id = " + std::to_string(categoryId);
+    std::string query = "SELECT id, description, amount, date, type, user_id, category_id, family_id FROM transactions WHERE family_id = " + std::to_string(familyId) + "AND category_id = " + std::to_string(categoryId);
     mysql_query(conn, query.c_str());
     MYSQL_RES *result = mysql_store_result(conn);
 
@@ -170,13 +174,32 @@ vector<Transaction> TransactionRepository::getTransactionByFamilyIdCategoryId(in
         time_t date = std::mktime(&tmReg);
 
         TransactionType type = (std::string(row[4]) == "INCOME") ? TransactionType::INCOME : TransactionType::EXPENSE;
-        int categoryId = std::stoi(row[5]);
-        int familyId = std::stoi(row[6]);
+        int userId = std::stoi(row[5]);
+        int categoryId = std::stoi(row[6]);
+        int familyId = std::stoi(row[7]);
 
-        Transaction transaction = Transaction::createTransaction(description, amount, date, type, familyId, categoryId);
+        Transaction transaction = Transaction::createTransaction(description, amount, date, type, userId, familyId, categoryId);
         transactions.push_back(transaction);
     }
 
     mysql_free_result(result);
     return transactions;
+}
+
+void TransactionRepository::clearTransactionTable() {
+    if (conn) {
+        const char* disable_fk_checks = "SET FOREIGN_KEY_CHECKS = 0;";
+        const char* truncate_table = "TRUNCATE TABLE transactions;";
+        const char* enable_fk_checks = "SET FOREIGN_KEY_CHECKS = 1;";
+
+        if (mysql_query(conn, disable_fk_checks)) { cerr << "Error disabling foreign key checks: " << mysql_error(conn) << std::endl; }
+
+        if (mysql_query(conn, truncate_table)) { cerr << "Error truncating transactions table: " << mysql_error(conn) << std::endl; }
+        else { cout << "Transactions table cleared successfully." << std::endl; }
+
+        if (mysql_query(conn, enable_fk_checks)) { cerr << "Error enabling foreign key checks: " << mysql_error(conn) << std::endl; }
+    
+    } else {
+        cerr << "MySQL connection is not established." << std::endl;
+    }
 }

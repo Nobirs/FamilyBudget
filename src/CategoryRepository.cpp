@@ -99,7 +99,7 @@ Category CategoryRepository::getCategoryByNameFamilyId(const string &name, int f
 
 Category CategoryRepository::getCategoryByCategoryIdFamilyId(int categoryId, int familyId) {
     Category category;
-    string query = "SELECT id, name, description FROM categories WHERE family_id = " + std::to_string(familyId) + " AND categoryId = " + std::to_string(categoryId);
+    string query = "SELECT id, name, description FROM categories WHERE family_id = " + std::to_string(familyId) + " AND id = " + std::to_string(categoryId);
 
     if (mysql_query(conn, query.c_str())) {
         cerr << "MySQL query error (getCategoryByCategoryIdFamilyId): " << mysql_error(conn) << std::endl;
@@ -117,8 +117,9 @@ Category CategoryRepository::getCategoryByCategoryIdFamilyId(int categoryId, int
         int id = std::stoi(row[0]);
         string name = row[1];
         string description = row[2];
-
+        cout << "Name: " + name << std::endl;
         Category existingCategory = Category::createCategory(id, name, description, familyId);
+        cout << "Name: " + existingCategory.getName() << std::endl;
         return existingCategory;
     }
     return category;
@@ -127,13 +128,17 @@ Category CategoryRepository::getCategoryByCategoryIdFamilyId(int categoryId, int
 
 void CategoryRepository::clearCategoryTable() {
     if (conn) {
-        const char* query = "DELETE FROM categories";
-        
-        if (mysql_query(conn, query)) {
-            cerr << "Error clearing category table: " << mysql_error(conn) << std::endl;
-        } else {
-            cout << "Category table cleared successfully." << std::endl;
-        }
+        const char* disable_fk_checks = "SET FOREIGN_KEY_CHECKS = 0;";
+        const char* truncate_table = "TRUNCATE TABLE categories;";
+        const char* enable_fk_checks = "SET FOREIGN_KEY_CHECKS = 1;";
+
+        if (mysql_query(conn, disable_fk_checks)) { cerr << "Error disabling foreign key checks: " << mysql_error(conn) << std::endl; }
+
+        if (mysql_query(conn, truncate_table)) { cerr << "Error truncating categories table: " << mysql_error(conn) << std::endl; }
+        else { cout << "Categories table cleared successfully." << std::endl; }
+
+        if (mysql_query(conn, enable_fk_checks)) { cerr << "Error enabling foreign key checks: " << mysql_error(conn) << std::endl; }
+    
     } else {
         cerr << "MySQL connection is not established." << std::endl;
     }

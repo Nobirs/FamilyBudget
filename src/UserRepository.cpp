@@ -174,13 +174,17 @@ vector<User> UserRepository::getAllUsers() {
 
 void UserRepository::clearUsersTable() {
     if (conn) {
-        const char* query = "DELETE FROM users";
-        
-        if (mysql_query(conn, query)) {
-            cerr << "Error clearing users table: " << mysql_error(conn) << std::endl;
-        } else {
-            cout << "Users table cleared successfully." << std::endl;
-        }
+        const char* disable_fk_checks = "SET FOREIGN_KEY_CHECKS = 0;";
+        const char* truncate_table = "TRUNCATE TABLE users;";
+        const char* enable_fk_checks = "SET FOREIGN_KEY_CHECKS = 1;";
+
+        if (mysql_query(conn, disable_fk_checks)) { cerr << "Error disabling foreign key checks: " << mysql_error(conn) << std::endl; }
+
+        if (mysql_query(conn, truncate_table)) { cerr << "Error truncating users table: " << mysql_error(conn) << std::endl; }
+        else { cout << "Users table cleared successfully." << std::endl; }
+
+        if (mysql_query(conn, enable_fk_checks)) { cerr << "Error enabling foreign key checks: " << mysql_error(conn) << std::endl; }
+    
     } else {
         cerr << "MySQL connection is not established." << std::endl;
     }
