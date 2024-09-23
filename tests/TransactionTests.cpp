@@ -11,12 +11,24 @@ protected:
     // Указатели на транзакции, чтобы очистить память после каждого теста
     Transaction* incomeTransaction;
     Transaction* expenseTransaction;
+    UserRepository userRep;
+    CategoryRepository categoryRep;
 
     // SetUp вызывается перед каждым тестом
     void SetUp() override {
         // Инициализация тестовых транзакций
-        incomeTransaction = new Transaction("Salary", 1000.0, TransactionType::INCOME, "Work", 1);
-        expenseTransaction = new Transaction("Groceries", 50.0, TransactionType::EXPENSE, "Food", 1);
+        User user1("testUser", "testPassword", UserRole::USER, "testEmail@gmail.com");
+        User user2("testUser2", "testPassword2", UserRole::USER, "test2Email@gmail.com");
+        userRep.addUser(user1);
+        userRep.addUser(user2);
+
+        Category category1("Work", "", 1);
+        Category category2("Food", "", 1);
+        categoryRep.addCategory(category1);
+        categoryRep.addCategory(category2);
+
+        incomeTransaction = new Transaction("Salary", 1000.0, TransactionType::INCOME, "Work", 1, 1);
+        expenseTransaction = new Transaction("Groceries", 50.0, TransactionType::EXPENSE, "Food", 1, 1);
     }
 
     // TearDown вызывается после каждого теста
@@ -24,6 +36,8 @@ protected:
         // Освобождаем память, выделенную для транзакций
         delete incomeTransaction;
         delete expenseTransaction;
+        userRep.clearUsersTable();
+        categoryRep.clearCategoryTable();
     }
 };
 
@@ -46,10 +60,10 @@ TEST_F(TransactionTest, GetTypeTest) {
 }
 
 // Тест для проверки категории транзакции
-// TEST_F(TransactionTest, GetCategoryTest) {
-//     ASSERT_EQ(incomeTransaction->getCategory(), "Work");
-//     ASSERT_EQ(expenseTransaction->getCategory(), "Food");
-// }
+TEST_F(TransactionTest, GetCategoryTest) {
+    ASSERT_EQ(incomeTransaction->getCategory(), "Work");
+    ASSERT_EQ(expenseTransaction->getCategory(), "Food");
+}
 
 // Тест для проверки идентификатора семьи
 TEST_F(TransactionTest, GetFamilyIdTest) {
