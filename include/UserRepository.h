@@ -23,9 +23,11 @@ public:
     bool addUser(const User &user);
     bool deleteUser(const string &username);
     bool resetPassword(const string &username, const string &newPassword);
+    bool changePasswordHash(const string &username, const string&newPasswordHash);
     bool updateUsername(const string &oldUsername, const string &newUsername);
     bool updateUserRole(const string &username, UserRole newRole);
     bool updateUserFamilyId(const string &username, int newFamilyId);
+    bool updateUserById(int userId, const User &user);
 
     User getUserById(int userId);
     User getUserByUsername(const string &username);

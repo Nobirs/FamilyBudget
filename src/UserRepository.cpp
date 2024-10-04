@@ -57,6 +57,15 @@ bool UserRepository::resetPassword(const string &username, const string &newPass
     return true;
 }
 
+bool UserRepository::changePasswordHash(const string &username, const string &newPasswordHash) {
+    string query = "UPDATE users SET password_hash = '" + newPasswordHash + "' WHERE username = '" + username + "'";
+    if(mysql_query(conn, query.c_str())){
+        cerr << "Error resetting passwordHash: " << mysql_error(conn) << std::endl;
+        return false;
+    }
+    return true;
+}
+
 bool UserRepository::updateUsername(const string &oldUsername, const string &newUsername) {
     string query = "UPDATE users SET username = '" + newUsername + "' WHERE username = '" + oldUsername + "'";
     
@@ -169,6 +178,29 @@ User UserRepository::getUserById(int userId) {
 
     mysql_free_result(result);
     throw std::runtime_error("User not found");
+}
+
+bool UserRepository::updateUserById(int userId, const User &user) {
+    string roleStr = "USER";
+    if (user.getRole() == UserRole::ADMIN) roleStr = "ADMIN";
+    else if (user.getRole() == UserRole::FAMILY_MEMBER) roleStr = "FAMILY_MEMBER";
+    string query = "UPDATE users SET ";
+    query += "username = '" + user.getUsername() + "', ";
+    query += "email = '" + user.getEmail() + "', ";
+    query += "password_hash = '" + user.getPasswordHash() + "', ";
+    query += "role = '" + roleStr + "', ";
+    query += "financial_role = '" + user.getFinancialRole() + "', ";
+    query += "budget_limit = " + std::to_string(user.getBudgetLimit()) + ", ";
+    query += "family_status = '" + user.getFamilyStatus() + "' ";
+    query += "WHERE id = " + std::to_string(userId);
+
+    // Выполняем запрос
+    if (mysql_query(conn, query.c_str())) {
+        std::cerr << "MySQL query error: " << mysql_error(conn) << std::endl;
+        return false;
+    }
+    return true;
+    
 }
 
 vector<User> UserRepository::getAllUsers() {
