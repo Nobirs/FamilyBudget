@@ -131,6 +131,46 @@ User UserRepository::getUserByUsername(const std::string &username) {
     throw std::runtime_error("User not found");
 }
 
+User UserRepository::getUserById(int userId) {
+    string query = "SELECT username, password_hash, role, email, registration_date, last_login, financial_role, budget_limit, family_status, family_id FROM users WHERE id = " + std::to_string(userId);
+    mysql_query(conn, query.c_str());
+    MYSQL_RES *result = mysql_store_result(conn);
+    MYSQL_ROW row = mysql_fetch_row(result);
+
+    if (row) {
+        string username = row[0];
+        string passwordHash = row[1];
+
+        string role = row[2];
+        UserRole userRole = UserRole::USER;
+        if (role == "ADMIN") userRole = UserRole::ADMIN;
+        else if (role == "FAMILY_MEMBER") userRole = UserRole::FAMILY_MEMBER;
+        
+        string email = row[3];
+
+
+        // Преобразование строки в time_t (registration_date)
+        std::tm tmReg = {};
+        strptime(row[4], "%Y-%m-%d %H:%M:%S", &tmReg);
+        time_t registrationDate = std::mktime(&tmReg);
+
+        std::tm tmLogin = {};
+        strptime(row[5], "%Y-%m-%d %H:%M:%S", &tmLogin);
+        time_t lastLogin = std::mktime(&tmLogin);
+
+        string financialRole = row[6];
+        double budgetLimit = std::stod(row[7]);
+        string familyStatus = row[8];
+        int familyId = std::stoi(row[9]);
+
+        User user = User::createUser(username, passwordHash, userRole, email, registrationDate, financialRole, budgetLimit, familyStatus, familyId);
+        return user;
+    }
+
+    mysql_free_result(result);
+    throw std::runtime_error("User not found");
+}
+
 vector<User> UserRepository::getAllUsers() {
     string query = "SELECT username, password_hash, role, email, registration_date, last_login, financial_role, budget_limit, family_status, family_id FROM users";
     mysql_query(conn, query.c_str());
