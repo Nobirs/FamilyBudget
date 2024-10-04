@@ -91,7 +91,9 @@ bool UserRepository::updateUserRole(const string &username, UserRole newRole) {
 }
 
 bool UserRepository::updateUserFamilyId(const string &username, int newFamilyId) {
-    string query = "UPDATE users SET family_id = '" + std::to_string(newFamilyId) + "' WHERE username = '" + username + "'";
+    string familyId = newFamilyId == NULL ? "NULL" : std::to_string(newFamilyId);
+
+    string query = "UPDATE users SET family_id = '" + familyId + "' WHERE username = '" + username + "'";
     
     if(mysql_query(conn, query.c_str())) {
         cerr << "Error updating user familyId: " << mysql_error(conn) << std::endl;
