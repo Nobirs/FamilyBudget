@@ -41,8 +41,34 @@ bool TransactionRepository::deleteTransaction(int transactionId) {
     return true;
 }
 
+Transaction TransactionRepository::getTransactionById(int transactionId) {
+    string query = "SELECT id, description, amount, date, type, user_id, category_id, family_id FROM transactions WHERE id = " + std::to_string(transactionId);
+    if (mysql_query(conn, query.c_str())) {
+        cerr << "MySQL query error (getTransactionById): " << mysql_error(conn) << std::endl;
+        return;
+    }
+    MYSQL_RES *result = mysql_store_result(conn);
+
+    MYSQL_ROW row = mysql_fetch_row(result);
+    int id = std::stoi(row[0]);
+    string description = row[1];
+    double amount = std::stod(row[2]);
+    // Преобразование строки в time_t (date)
+    tm tmReg = {};
+    strptime(row[3], "%Y-%m-%d %H:%M:%S", &tmReg);
+    time_t date = std::mktime(&tmReg);
+
+    TransactionType type = (std::string(row[4]) == "INCOME") ? TransactionType::INCOME : TransactionType::EXPENSE;
+    int userId = std::stoi(row[5]);
+    int categoryId = std::stoi(row[6]);
+    int familyId = std::stoi(row[7]);
+
+    Transaction transaction = Transaction::createTransaction(description, amount, date, type, userId, familyId, categoryId);
+    return transaction;
+}
+
 vector<Transaction> TransactionRepository::getTransactionsByUserId(int userId) {
-    std::string query = "SELECT id, description, amount, date, type, user_id, category_id, family_id FROM transactions WHERE user_id = " + std::to_string(userId);
+    string query = "SELECT id, description, amount, date, type, user_id, category_id, family_id FROM transactions WHERE user_id = " + std::to_string(userId);
     mysql_query(conn, query.c_str());
     MYSQL_RES *result = mysql_store_result(conn);
 
@@ -50,10 +76,10 @@ vector<Transaction> TransactionRepository::getTransactionsByUserId(int userId) {
     MYSQL_ROW row;
     while ((row = mysql_fetch_row(result))) {
         int id = std::stoi(row[0]);
-        std::string description = row[1];
+        string description = row[1];
         double amount = std::stod(row[2]);
         // Преобразование строки в time_t (date)
-        std::tm tmReg = {};
+        tm tmReg = {};
         strptime(row[3], "%Y-%m-%d %H:%M:%S", &tmReg);
         time_t date = std::mktime(&tmReg);
 

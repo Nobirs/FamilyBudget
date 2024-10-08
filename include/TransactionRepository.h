@@ -22,6 +22,7 @@ public:
     bool addTransaction(const Transaction &transaction);
     bool deleteTransaction(int transactionId);
 
+    Transaction getTransactionById(int transactionId);
     vector<Transaction> getTransactionsByUserId(int userId);
     vector<Transaction> getTransactionsByFamilyId(int familyId);
     vector<Transaction> getTransactionByCategoryId(int categoryId);
