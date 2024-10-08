@@ -26,6 +26,7 @@ private:
 
     static Transaction createTransaction(const string &description, double amount, time_t date, 
                                     TransactionType type, int userId, int familyId, int categoryId);
+    
 
 public:
     Transaction();
@@ -34,12 +35,25 @@ public:
 
 
     const string &getDescription() const;
+    void setDescription(const string& value);
+
     double getAmount() const;
+    void setAmount(int value);
+
     time_t getDate() const;
+    void setDate(const string& value);
+
     TransactionType getType() const;
+    void setType(const string& value);
+
     const string getCategory() const;
+
     int getUserId() const;
+    void setUserId(int newUserId);
+
     int getFamilyId() const;
+    void setFamilyId(int newFamilyId);
+    
     int getCategoryId() const;
     void setCategoryId(int categoryId);
 

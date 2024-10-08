@@ -38,11 +38,38 @@ Transaction Transaction::createTransaction(const string &description, double amo
 }
 
 const string &Transaction::getDescription() const { return description; }
+void Transaction::setDescription(const string& value) {
+    this->description = value;
+}
+
 double Transaction::getAmount() const { return amount; }
+void Transaction::setAmount(int value) {
+    this->amount = value;
+}
+
 time_t Transaction::getDate() const { return date; }
+void Transaction::setDate(const string& value) {
+    tm tmReg = {};
+    strptime(value.c_str(), "%Y-%m-%d %H:%M:%S", &tmReg);
+    time_t date = std::mktime(&tmReg);
+    this->date = date;
+}
+
 TransactionType Transaction::getType() const { return type; }
+void Transaction::setType(const string& value) {
+    if(value == "INCOME") this->type = TransactionType::INCOME;
+    else this->type = TransactionType::EXPENSE;
+}
+
 int Transaction::getUserId() const { return userId; }
+void Transaction::setUserId(int newUserId) {
+    this->userId = newUserId;
+}
+
 int Transaction::getFamilyId() const { return familyId; }
+void Transaction::setFamilyId(int newFamilyId) {
+    this->familyId = newFamilyId;
+}
 
 const string Transaction::getCategory() const {
     CategoryRepository rep;
