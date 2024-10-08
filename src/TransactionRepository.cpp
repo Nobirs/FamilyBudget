@@ -45,7 +45,8 @@ Transaction TransactionRepository::getTransactionById(int transactionId) {
     string query = "SELECT id, description, amount, date, type, user_id, category_id, family_id FROM transactions WHERE id = " + std::to_string(transactionId);
     if (mysql_query(conn, query.c_str())) {
         cerr << "MySQL query error (getTransactionById): " << mysql_error(conn) << std::endl;
-        return;
+        Transaction defaultTransaction;
+        return defaultTransaction;
     }
     MYSQL_RES *result = mysql_store_result(conn);
 
