@@ -30,6 +30,26 @@ bool TransactionRepository::addTransaction(const Transaction &transaction) {
     return true;
 }
 
+bool TransactionRepository::updateTransaction(int transactionId, const Transaction &transaction) {
+    string formattedDate = formatDate(transaction.getDate());
+    string query = "UPDATE transactions SET "
+                    "description = '" + transaction.getDescription() + "', "
+                    "amount = '" + std::to_string(transaction.getAmount()) + "', "
+                    "date = '" + formattedDate + "', "
+                    "type = " + transaction.getTypeStr() + ", "
+                    "user_id = '" + std::to_string(transaction.getUserId()) + "', "
+                    "family_id = " + (transaction.getFamilyId() ? std::to_string(transaction.getFamilyId()) : "NULL") + " "
+                    "categoryId = " + std::to_string(transaction.getCategoryId()) + ", "
+                    "WHERE id = " + std::to_string(transactionId);
+
+    // Выполняем SQL-запрос
+    if (mysql_query(conn, query.c_str())) {
+        std::cerr << "MySQL query error: " << mysql_error(conn) << std::endl;
+        return false;
+    }
+    return true;
+}
+
 bool TransactionRepository::deleteTransaction(int transactionId) {
     string query = "DELETE FROM transactions WHERE id = " + std::to_string(transactionId);
 

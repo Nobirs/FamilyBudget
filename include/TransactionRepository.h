@@ -3,8 +3,10 @@
 
 #include <vector>
 #include <iostream>
-#include "Transaction.h"
 #include <mysql/mysql.h>
+
+#include "Utils.h"
+#include "Transaction.h"
 
 using std::string;
 using std::vector;
@@ -20,6 +22,7 @@ public:
     TransactionRepository(MYSQL *connection);
 
     bool addTransaction(const Transaction &transaction);
+    bool updateTransaction(int transactionId, const Transaction &transaction);
     bool deleteTransaction(int transactionId);
 
     Transaction getTransactionById(int transactionId);
