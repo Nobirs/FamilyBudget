@@ -60,6 +60,7 @@ public:
     void setEmail(const string &newEmail);
 
     UserRole getRole() const;
+    string getRoleStr() const;
     void setRole(UserRole newRole);
 
     time_t getRegistrationDate() const;

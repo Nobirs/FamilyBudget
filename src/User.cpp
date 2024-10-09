@@ -66,6 +66,15 @@ void User::setEmail(const string &newEmail) {
 }
 
 UserRole User::getRole() const { return this->role; }
+string User::getRoleStr() const {
+    switch(this->role){
+        case UserRole::ADMIN: return "ADMIN";
+        case UserRole::USER: return "USER";
+        case UserRole::FAMILY_MEMBER: return "FAMILY_MEMBER";
+        default: return "USER";
+    }
+    return "USER";
+}
 void User::setRole(UserRole newRole) { this->role = newRole; }
 
 time_t User::getRegistrationDate() const { return this->registrationDate; }
