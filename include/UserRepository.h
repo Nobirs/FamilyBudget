@@ -22,6 +22,7 @@ public:
 
     bool addUser(const User &user);
     bool deleteUser(const string &username);
+    bool updateUser(int userId, const User &user);
     bool resetPassword(const string &username, const string &newPassword);
     bool changePasswordHash(const string &username, const string&newPasswordHash);
     bool updateUsername(const string &oldUsername, const string &newUsername);

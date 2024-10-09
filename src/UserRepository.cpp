@@ -47,6 +47,26 @@ bool UserRepository::deleteUser(const string &username) {
     return true;
 }
 
+bool UserRepository::updateUser(int userId, const User &user) {
+    string query = "UPDATE users SET "
+                    "username = '" + user.getUsername() + "', "
+                    "email = '" + user.getEmail() + "', "
+                    "password_hash = '" + user.getPasswordHash() + "', "
+                    "role = " + user.getRoleStr() + ", "
+                    "financial_role = '" + user.getFinancialRole() + "', "
+                    "budget_limit = " + std::to_string(user.getBudgetLimit()) + ", "
+                    "family_status = '" + user.getFamilyStatus() + "', "
+                    "family_id = " + (user.getFamilyId() ? std::to_string(user.getFamilyId()) : "NULL") + " "
+                    "WHERE id = " + std::to_string(userId);
+
+    // Выполняем SQL-запрос
+    if (mysql_query(conn, query.c_str())) {
+        std::cerr << "MySQL query error: " << mysql_error(conn) << std::endl;
+        return false;
+    }
+    return true;
+}
+
 bool UserRepository::resetPassword(const string &username, const string &newPassword) {
     string passwordHash = User::hashPassword(newPassword);
     string query = "UPDATE users SET password_hash = '" + passwordHash + "' WHERE username = '" + username + "'";
