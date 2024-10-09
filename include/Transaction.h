@@ -44,6 +44,7 @@ public:
     void setDate(const string& value);
 
     TransactionType getType() const;
+    string getTypeStr() const;
     void setType(const string& value);
 
     const string getCategory() const;

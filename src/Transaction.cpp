@@ -56,6 +56,14 @@ void Transaction::setDate(const string& value) {
 }
 
 TransactionType Transaction::getType() const { return type; }
+string Transaction::getTypeStr() const {
+    switch(this->type){
+        case TransactionType::INCOME: return "INCOME";
+        case TransactionType::EXPENSE: return "EXPENSE";
+        default: return "EXPENSE";
+    }
+    return "EXPENSE";
+}
 void Transaction::setType(const string& value) {
     if(value == "INCOME") this->type = TransactionType::INCOME;
     else this->type = TransactionType::EXPENSE;
