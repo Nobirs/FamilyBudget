@@ -45,8 +45,8 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
 ## Для выполнения тестов
-add_executable(UserTests tests/UserTests.cpp src/User.cpp)
-add_executable(UserRepositoryTests tests/UserRepositoryTests.cpp src/UserRepository.cpp src/User.cpp)
+add_executable(UserTests tests/UserTests.cpp ${SRC_SOURCES})
+add_executable(UserRepositoryTests tests/UserRepositoryTests.cpp ${SRC_SOURCES})
 add_executable(TransactionTests tests/TransactionTests.cpp ${SRC_SOURCES})
 add_executable(TransactionRepositoryTests tests/TransactionRepositoryTests.cpp ${SRC_SOURCES})
 add_executable(CategoryTests tests/CategoryTests.cpp ${SRC_SOURCES})
@@ -54,7 +54,7 @@ add_executable(BudgetTests tests/BudgetTests.cpp ${SRC_SOURCES})
 add_executable(AllTests ${TEST_SOURCES} ${SRC_SOURCES})
 
 # Линкуем с Google Test и pthread
-target_link_libraries(UserTests gtest gtest_main pthread OpenSSL::SSL)
+target_link_libraries(UserTests gtest gtest_main pthread ${MYSQL_LIB} OpenSSL::SSL)
 target_link_libraries(TransactionTests gtest gtest_main pthread ${MYSQL_LIB} OpenSSL::SSL)
 target_link_libraries(BudgetTests gtest gtest_main pthread ${MYSQL_LIB} OpenSSL::SSL)
 target_link_libraries(TransactionRepositoryTests gtest gtest_main pthread ${MYSQL_LIB} OpenSSL::SSL)
