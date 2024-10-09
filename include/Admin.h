@@ -53,9 +53,4 @@ public:
     void setBudgetLimit(int userId, double limit);
     //void adjustCategoryLimit(int categoryId, double limit);
 
-    // Управление системой
-    //void configureSettings();
-    void updateUserInDatabase(const User& updatedUser);
-    void updateCategoryInDatabase(const Category& updatedCategory);
-    void updateTransactionInDatabase(const Transaction& updatedTransaction);
 };

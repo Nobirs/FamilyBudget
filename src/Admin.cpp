@@ -7,16 +7,16 @@ FamilyAdmin::FamilyAdmin(const User& user) : user(user) {
     }
 
     // Инициализация стратегий для пользователя
-    userStrategies["username"] = make_unique<EditUsernameStrategy>();
-    userStrategies["password"] = make_unique<EditPasswordStrategy>();
-    userStrategies["email"] = make_unique<EditEmailStrategy>();
-    userStrategies["role"] = make_unique<EditRoleStrategy>();
-    userStrategies["budgetLimit"] = make_unique<EditBudgetLimitStrategy>();
+    userStrategies["username"] = make_unique<IEditUsernameStrategy>();
+    userStrategies["password"] = make_unique<IEditPasswordStrategy>();
+    userStrategies["email"] = make_unique<IEditEmailStrategy>();
+    userStrategies["role"] = make_unique<IEditRoleStrategy>();
+    userStrategies["budgetLimit"] = make_unique<IEditBudgetLimitStrategy>();
 
     // Инициализация стратегий для категории
-    categoryStrategies["name"] = make_unique<EditNameStrategy>();
-    categoryStrategies["description"] = make_unique<EditDescriptionStrategy>();
-    categoryStrategies["familyid"] = make_unique<EditFamilyIdStrategy>();
+    categoryStrategies["name"] = make_unique<CEditNameStrategy>();
+    categoryStrategies["description"] = make_unique<CEditDescriptionStrategy>();
+    categoryStrategies["familyid"] = make_unique<CEditFamilyIdStrategy>();
 
     // Инициализация стратегий для транзакций
     transactionStrategies["description"] = make_unique<TEditDescriptionStrategy>();
@@ -49,7 +49,7 @@ void FamilyAdmin::editUserInfo(int userId, const map<string, string>& changes) {
             std::cout << "Unknown field: " << field << std::endl;
         }
     }
-    updateUserInDatabase(userToEdit);
+    userRep.updateUser(userId, userToEdit);
 }
 
 vector<Transaction> FamilyAdmin::getFamilyTransactions() {
@@ -65,7 +65,7 @@ void FamilyAdmin::editTransactionInfo(int transactionId, const map<string, strin
             std::cout << "Unknown field: " << field << std::endl;
         }
     }
-    updateTransactionInDatabase(transactionToEdit);
+    transactionRep.updateTransaction(transactionId, transactionToEdit);
 }
 
 void FamilyAdmin::deleteTransaction(int transactionId) {
@@ -92,7 +92,7 @@ void FamilyAdmin::editCategory(int categoryId, const map<string, string>& change
             std::cout << "Unknown field: " << field << std::endl;
         }
     }
-    updateCategoryInDatabase(categoryToEdit);
+    categoryRep.updateCategory(categoryId, categoryToEdit);
 }
 
 void FamilyAdmin::generateReport() {
@@ -103,19 +103,3 @@ void FamilyAdmin::setBudgetLimit(int userId, double limit) {
     User user = userRep.getUserById(userId);
     userRep.updateBudgetLimit(user.getUsername(), limit);
 }
-
-// Метод для обновления пользователя в базе данных (пример)
-void FamilyAdmin::updateUserInDatabase(const User& updatedUser) {
-    std::cout << "User info for " << updatedUser.getUsername() << " updated in database." << std::endl;
-}
-
-// Метод для обновления категории в базе данных (пример)
-void FamilyAdmin::updateCategoryInDatabase(const Category& updatedCategory) {
-    std::cout << "Category info for " << updatedCategory.getName() << " updated in database." << std::endl;
-}
-
-// Метод для обновления категории в базе данных (пример)
-void FamilyAdmin::updateTransactionInDatabase(const Transaction& updatedTransaction) {
-    std::cout << "Category info for " << updatedTransaction.getDescription() << " updated in database." << std::endl;
-}
-
