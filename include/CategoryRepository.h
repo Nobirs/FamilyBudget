@@ -20,7 +20,8 @@ public:
     CategoryRepository();
     CategoryRepository(MYSQL *connection);
 
-    bool addCategory(const Category &category);            // Добавление новой категории
+    bool addCategory(const Category &category); 
+    bool updateCategory(int categoryId, const Category &category);           // Добавление новой категории
     bool deleteCategory(int categoryId);                   // Удаление категории
     vector<Category> getCategoriesByFamilyId(int familyId);  // Получение категорий для семьи
     Category getCategoryByCategoryIdFamilyId(int categoryId, int familyId);

@@ -30,6 +30,21 @@ bool CategoryRepository::addCategory(const Category &category) {
     return true;
 }
 
+bool CategoryRepository::updateCategory(int categoryId, const Category &category) {
+    string query = "UPDATE categories SET "
+                    "name = '" + category.getName() + "', "
+                    "description = '" + category.getDescription() + "', "
+                    "family_id = " + (category.getFamilyId() ? std::to_string(category.getFamilyId()) : "NULL") + " "
+                    "WHERE id = " + std::to_string(categoryId);
+
+    // Выполняем SQL-запрос
+    if (mysql_query(conn, query.c_str())) {
+        std::cerr << "MySQL query error: " << mysql_error(conn) << std::endl;
+        return false;
+    }
+    return true;
+}
+
 bool CategoryRepository::deleteCategory(int categoryId) {
     string query = "DELETE FROM categories WHERE id = " + std::to_string(categoryId);
 
