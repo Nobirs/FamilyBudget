@@ -13,7 +13,7 @@ public:
 };
 
 // Стратегия для изменения name
-class EditNameStrategy : public CEditStrategy {
+class CEditNameStrategy : public CEditStrategy {
 public:
     void apply(Category& category, const std::string& value) override {
         category.setName(value);
@@ -22,7 +22,7 @@ public:
 };
 
 // Стратегия для изменения description
-class EditDescriptionStrategy : public CEditStrategy {
+class CEditDescriptionStrategy : public CEditStrategy {
 public:
     void apply(Category& category, const std::string& value) override {
         category.setDescription(value);
@@ -31,7 +31,7 @@ public:
 };
 
 // Стратегия для изменения familyId
-class EditFamilyIdStrategy : public CEditStrategy {
+class CEditFamilyIdStrategy : public CEditStrategy {
 public:
     void apply(Category& category, const std::string& value) override {
         try {

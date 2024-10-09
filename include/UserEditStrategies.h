@@ -13,7 +13,7 @@ public:
 };
 
 // Стратегия для изменения email
-class EditEmailStrategy : public IEditStrategy {
+class IEditEmailStrategy : public IEditStrategy {
 public:
     void apply(User& user, const std::string& value) override {
         user.setEmail(value);
@@ -22,7 +22,7 @@ public:
 };
 
 // Стратегия для изменения username
-class EditUsernameStrategy : public IEditStrategy {
+class IEditUsernameStrategy : public IEditStrategy {
 public:
     void apply(User& user, const std::string& value) override {
         user.setUsername(value);
@@ -31,7 +31,7 @@ public:
 };
 
 // Стратегия для изменения password
-class EditPasswordStrategy : public IEditStrategy {
+class IEditPasswordStrategy : public IEditStrategy {
 public:
     void apply(User& user, const std::string& value) override {
         user.changePassword(value); 
@@ -40,7 +40,7 @@ public:
 };
 
 // Стратегия для изменения role
-class EditRoleStrategy : public IEditStrategy {
+class IEditRoleStrategy : public IEditStrategy {
 public:
     void apply(User& user, const std::string& value) override {
         UserRole role = UserRole::USER;
@@ -52,7 +52,7 @@ public:
 };
 
 // Стратегия для изменения budgetLimit
-class EditBudgetLimitStrategy : public IEditStrategy {
+class IEditBudgetLimitStrategy : public IEditStrategy {
 public:
     void apply(User& user, const std::string& value) override {
         try {
