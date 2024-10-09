@@ -47,6 +47,10 @@ Thumbs.db
 CMakeLists.txt.user
 CMakeLists(old).txt
 
+# Ненужные файле
+buildLog.txt
+projectStruct.txt
+
 # Файлы для Windows
 *.obj
 *.pdb
