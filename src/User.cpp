@@ -11,6 +11,7 @@ User::User(){
     financialRole = "FAMILY_MEMBER";
     budgetLimit = 0.0;
     familyStatus = "CHILD";
+    familyId = NULL;
 }
 
 string User::hashPassword(const string &password) {

@@ -30,7 +30,7 @@ class UserRepository;
 
 
 class User {
-private:
+protected:
     string username;
     string passwordHash;
     UserRole role;
@@ -49,7 +49,7 @@ private:
 
 public:
     User();
-    User(const string &username, const string &passwordHash, UserRole role, 
+    User(const string &username, const string &password, UserRole role, 
                         const string &email, const string &financialRole="FAMILY_MEMBER", 
                         double budgetLimit=0.0, const string& familyStatus="CHILD", int familyId=1);
 
@@ -94,6 +94,21 @@ public:
 
 
     friend class UserRepository;
+
+    bool operator==(const User &user) const {
+        return (
+            this->username == user.username &&
+            this->passwordHash == user.passwordHash &&
+            this->role == user.role &&
+            this->email == user.email &&
+            this->registrationDate == user.registrationDate &&
+            this->lastLogin == user.lastLogin &&
+            this->financialRole == user.financialRole &&
+            this->budgetLimit == user.budgetLimit &&
+            this->familyStatus == user.familyStatus &&
+            this->familyId == user.familyId
+        );
+    }
 };
 
 #endif // USER_H
