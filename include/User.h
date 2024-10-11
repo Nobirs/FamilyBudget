@@ -102,7 +102,6 @@ public:
             this->role == user.role &&
             this->email == user.email &&
             this->registrationDate == user.registrationDate &&
-            this->lastLogin == user.lastLogin &&
             this->financialRole == user.financialRole &&
             this->budgetLimit == user.budgetLimit &&
             this->familyStatus == user.familyStatus &&
