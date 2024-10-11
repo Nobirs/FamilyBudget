@@ -20,6 +20,16 @@ set(CMAKE_AUTORCC ON)
 # Добавить исполняемый файл для основного приложения
 add_executable(FamilyBudget main.cpp)
 
+# Для подавления предупреждений глобально в проекте для GCC/Clang
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    add_compile_options(-w)
+endif()
+
+# Для MSVC
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    add_compile_options(/w)
+endif()
+
 # Подключи необходимые библиотеки Qt
 target_link_libraries(FamilyBudget PRIVATE Qt6::Widgets)
 
