@@ -52,7 +52,7 @@ bool UserRepository::updateUser(int userId, const User &user) {
                     "username = '" + user.getUsername() + "', "
                     "email = '" + user.getEmail() + "', "
                     "password_hash = '" + user.getPasswordHash() + "', "
-                    "role = " + user.getRoleStr() + ", "
+                    "role = " + "'" + user.getRoleStr() + "'" + ", "
                     "financial_role = '" + user.getFinancialRole() + "', "
                     "budget_limit = " + std::to_string(user.getBudgetLimit()) + ", "
                     "family_status = '" + user.getFamilyStatus() + "', "
@@ -152,7 +152,8 @@ User UserRepository::getUserByUsername(const std::string &username) {
         string financialRole = row[6];
         double budgetLimit = std::stod(row[7]);
         string familyStatus = row[8];
-        int familyId = std::stoi(row[9]);
+        int familyId = 0;
+        if (row[9] != NULL) familyId = std::stoi(row[9]);
 
         User user = User::createUser(username, passwordHash, userRole, email, registrationDate, financialRole, budgetLimit, familyStatus, familyId);
         return user;
@@ -192,7 +193,8 @@ User UserRepository::getUserById(int userId) {
         string financialRole = row[6];
         double budgetLimit = std::stod(row[7]);
         string familyStatus = row[8];
-        int familyId = std::stoi(row[9]);
+        int familyId = 0;
+        if (row[9] != NULL) familyId = std::stoi(row[9]);
 
         User user = User::createUser(username, passwordHash, userRole, email, registrationDate, financialRole, budgetLimit, familyStatus, familyId);
         return user;
@@ -213,7 +215,8 @@ bool UserRepository::updateUserById(int userId, const User &user) {
     query += "role = '" + roleStr + "', ";
     query += "financial_role = '" + user.getFinancialRole() + "', ";
     query += "budget_limit = " + std::to_string(user.getBudgetLimit()) + ", ";
-    query += "family_status = '" + user.getFamilyStatus() + "' ";
+    query += "family_status = '" + user.getFamilyStatus() + "', ";
+    query += "family_id = " + std::to_string(user.getFamilyId()) + " ";
     query += "WHERE id = " + std::to_string(userId);
 
     // Выполняем запрос
@@ -256,7 +259,8 @@ vector<User> UserRepository::getAllUsers() {
         string financialRole = row[6];
         double budgetLimit = std::stod(row[7]);
         string familyStatus = row[8];
-        int familyId = std::stoi(row[9]);
+        int familyId = 0;
+        if (row[9] != NULL) familyId = std::stoi(row[9]);
 
         User user = User::createUser(username, passwordHash, userRole, email, registrationDate, financialRole, budgetLimit, familyStatus, familyId);
         users.push_back(user);
