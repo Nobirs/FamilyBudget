@@ -21,9 +21,10 @@ public:
     CategoryRepository(MYSQL *connection);
 
     bool addCategory(const Category &category); 
-    bool updateCategory(int categoryId, const Category &category);           // Добавление новой категории
-    bool deleteCategory(int categoryId);                   // Удаление категории
-    vector<Category> getCategoriesByFamilyId(int familyId);  // Получение категорий для семьи
+    bool updateCategory(int categoryId, const Category &category);
+    bool deleteCategory(int categoryId);
+    vector<Category> getAllCategories();
+    vector<Category> getCategoriesByFamilyId(int familyId);
     Category getCategoryByCategoryIdFamilyId(int categoryId, int familyId);
     Category getCategoryByNameFamilyId(const string &name, int familyId);
     void clearCategoryTable();

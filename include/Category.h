@@ -8,7 +8,7 @@ using std::string;
 class CategoryRepository;
 
 class Category {
-private:
+protected:
     int id;
     string name;
     string description;

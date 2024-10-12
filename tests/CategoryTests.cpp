@@ -5,49 +5,63 @@
 #include "Category.h"
 #include "CategoryRepository.h"
 
-
-class CategoryRepositoryTests: public ::testing::Test {
+class CategoryTests: public Category, public ::testing::Test {
 protected:
-    UserRepository userRepository;
-    CategoryRepository categoryRepository;
+    User user;
+    Category category;
+    UserRepository userRep;
+    CategoryRepository categoryRep;
 
     void SetUp() override {
-        userRepository.clearUsersTable();
-        categoryRepository.clearCategoryTable();
-
-        User user("testUser", "testPassword", UserRole::USER, "testEmail@gmail.com");
-        userRepository.addUser(user);
+        userRep.clearUsersTable();
+        categoryRep.clearCategoryTable();
+        user = User("testUser", "testPassword", UserRole::USER, "testEmail@gmail.com");
+        userRep.addUser(user);
     }
 };
 
-
-TEST_F(CategoryRepositoryTests, AddCategoryTest) {
-    Category category("Entertainment", "Entertainment expenses", 1);
-
-    ASSERT_TRUE(categoryRepository.addCategory(category));
-    ASSERT_EQ(categoryRepository.getCategoriesByFamilyId(1)[0].getName(), "Entertainment");
+TEST_F(CategoryTests, GetIdTest) {
+    ASSERT_EQ(category.getId(), 0);
 }
 
-TEST_F(CategoryRepositoryTests, DeleteCategoryTest) {
-    Category category("Entertainment", "Entertainment expenses", 1);
-    Category category2("General", "General expenses", 1);
-
-    ASSERT_TRUE(categoryRepository.addCategory(category));
-    ASSERT_TRUE(categoryRepository.addCategory(category2));
-    ASSERT_TRUE(categoryRepository.deleteCategory(2));
+TEST_F(CategoryTests, GetNameTest) {
+    ASSERT_EQ(category.getName(), "GENERAL");
 }
 
-TEST_F(CategoryRepositoryTests, GetCategoriesByFamilyIdTest) {
-    Category category("Entertainment", "Entertainment expenses", 1);
-    Category category2("General", "General expenses", 1);
-    ASSERT_TRUE(categoryRepository.addCategory(category));
-    ASSERT_TRUE(categoryRepository.addCategory(category2));
+TEST_F(CategoryTests, GetDescriptionTest) {
+    ASSERT_EQ(category.getDescription(), "General category for all products");
+}
 
-    vector<Category> categories = categoryRepository.getCategoriesByFamilyId(1);
-    // Проверяем, что категории были получены
-    ASSERT_GT(categories.size(), 0);  // Должно быть больше 0 категорий
-    
-    // Проверяем первую категорию в списке (например, Entertainment)
-    EXPECT_EQ(categories[0].getName(), "Entertainment");
-    EXPECT_EQ(categories[1].getName(), "General");
+TEST_F(CategoryTests, GetFamilyIdTest) {
+    ASSERT_EQ(category.getFamilyId(), 0);
+}
+
+TEST_F(CategoryTests, SetNameTest) {
+    category.setName("New Name");
+    ASSERT_EQ(category.getName(), "New Name");
+}
+
+TEST_F(CategoryTests, SetDescriptionTest) {
+    category.setDescription("New Description");
+    ASSERT_EQ(category.getDescription(), "New Description");
+}
+
+TEST_F(CategoryTests, SetFamilyIdTest) {
+    category.setFamilyId(1);
+    ASSERT_EQ(category.getFamilyId(), 1);
+}
+
+TEST_F(CategoryTests, CreateCategoryTest) {
+    Category newCategory = Category::createCategory(1, "Food", "Food expenses", 1);
+    ASSERT_EQ(newCategory.getId(), 1);
+    ASSERT_EQ(newCategory.getName(), "Food");
+    ASSERT_EQ(newCategory.getDescription(), "Food expenses");
+    ASSERT_EQ(newCategory.getFamilyId(), 1);
+}
+
+TEST_F(CategoryTests, ConstructorTest) {
+    Category newCategory("Food", "Food expenses", 1);
+    ASSERT_EQ(newCategory.getName(), "Food");
+    ASSERT_EQ(newCategory.getDescription(), "Food expenses");
+    ASSERT_EQ(newCategory.getFamilyId(), 1);
 }

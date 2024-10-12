@@ -56,6 +56,35 @@ bool CategoryRepository::deleteCategory(int categoryId) {
     return true;
 }
 
+vector<Category> CategoryRepository::getAllCategories() {
+    vector<Category> categories;
+    string query = "SELECT id, name, description FROM categories";
+
+    if(mysql_query(conn, query.c_str())) {
+        cerr << "MySQL query error (getAllCategories): " << mysql_error(conn) << std::endl;
+        return categories;
+    }
+
+    MYSQL_RES *result = mysql_store_result(conn);
+    if(result == NULL) {
+        cerr << "MySQL store result error: " << mysql_error(conn) << std::endl;
+        return categories;
+    }
+
+    MYSQL_ROW row;
+    while ((row = mysql_fetch_row(result))) {
+        int id = std::stoi(row[0]);
+        string name = row[1];
+        string description = row[2];
+
+        Category category = Category::createCategory(id, name, description, 0);
+        categories.push_back(category);
+    }
+
+    mysql_free_result(result);
+    return categories;
+}
+
 vector<Category> CategoryRepository::getCategoriesByFamilyId(int familyId) {
     vector<Category> categories;
     string query = "SELECT id, name, description FROM categories WHERE family_id = " + std::to_string(familyId);
@@ -85,6 +114,32 @@ vector<Category> CategoryRepository::getCategoriesByFamilyId(int familyId) {
     return categories;
 }
 
+Category CategoryRepository::getCategoryByCategoryIdFamilyId(int categoryId, int familyId) {
+    Category category;
+    string query = "SELECT id, name, description FROM categories WHERE family_id = " + std::to_string(familyId) + " AND id = " + std::to_string(categoryId);
+
+    if (mysql_query(conn, query.c_str())) {
+        cerr << "MySQL query error (getCategoryByCategoryIdFamilyId): " << mysql_error(conn) << std::endl;
+        return category;
+    }
+
+    MYSQL_RES *result = mysql_store_result(conn);
+    if (result == nullptr) {
+        cerr << "MySQL store result error: " << mysql_error(conn) << std::endl;
+        return category;
+    }
+
+    MYSQL_ROW row;
+    if ((row = mysql_fetch_row(result))) {
+        int id = std::stoi(row[0]);
+        string name = row[1];
+        string description = row[2];
+        Category existingCategory = Category::createCategory(id, name, description, familyId);
+        return existingCategory;
+    }
+    return category;
+}
+
 Category CategoryRepository::getCategoryByNameFamilyId(const string &name, int familyId) {
     Category category;
     string query = "SELECT id, name, description FROM categories WHERE family_id = " + std::to_string(familyId) + " AND name = '" + name + "'";
@@ -112,33 +167,6 @@ Category CategoryRepository::getCategoryByNameFamilyId(const string &name, int f
     return category;
 }
 
-Category CategoryRepository::getCategoryByCategoryIdFamilyId(int categoryId, int familyId) {
-    Category category;
-    string query = "SELECT id, name, description FROM categories WHERE family_id = " + std::to_string(familyId) + " AND id = " + std::to_string(categoryId);
-
-    if (mysql_query(conn, query.c_str())) {
-        cerr << "MySQL query error (getCategoryByCategoryIdFamilyId): " << mysql_error(conn) << std::endl;
-        return category;
-    }
-
-    MYSQL_RES *result = mysql_store_result(conn);
-    if (result == nullptr) {
-        cerr << "MySQL store result error: " << mysql_error(conn) << std::endl;
-        return category;
-    }
-
-    MYSQL_ROW row;
-    if ((row = mysql_fetch_row(result))) {
-        int id = std::stoi(row[0]);
-        string name = row[1];
-        string description = row[2];
-        Category existingCategory = Category::createCategory(id, name, description, familyId);
-        return existingCategory;
-    }
-    return category;
-}
-
-
 void CategoryRepository::clearCategoryTable() {
     if (conn) {
         const char* disable_fk_checks = "SET FOREIGN_KEY_CHECKS = 0;";
@@ -148,7 +176,7 @@ void CategoryRepository::clearCategoryTable() {
         if (mysql_query(conn, disable_fk_checks)) { cerr << "Error disabling foreign key checks: " << mysql_error(conn) << std::endl; }
 
         if (mysql_query(conn, truncate_table)) { cerr << "Error truncating categories table: " << mysql_error(conn) << std::endl; }
-        else { cout << "Categories table cleared successfully." << std::endl; }
+        else { std::clog << "Categories table cleared successfully." << std::endl; }
 
         if (mysql_query(conn, enable_fk_checks)) { cerr << "Error enabling foreign key checks: " << mysql_error(conn) << std::endl; }
     

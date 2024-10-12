@@ -10,14 +10,14 @@ Category Category::createCategory(int id, const string &name, const string &desc
 }
 
 Category::Category() {
-    this->id = 1;
+    this->id = 0;
     this->name = "GENERAL";
     this->description = "General category for all products";
-    this->familyId = 1;
+    this->familyId = 0;
 }
 
 Category::Category(const string &name, const string &description, int familyId)
-    : name(name), description(description), familyId(familyId) {}
+    : id(NULL), name(name), description(description), familyId(familyId) {}
 
 int Category::getId() const { return id; }
 
