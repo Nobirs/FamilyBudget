@@ -36,10 +36,10 @@ bool TransactionRepository::updateTransaction(int transactionId, const Transacti
                     "description = '" + transaction.getDescription() + "', "
                     "amount = '" + std::to_string(transaction.getAmount()) + "', "
                     "date = '" + formattedDate + "', "
-                    "type = " + transaction.getTypeStr() + ", "
+                    "type = '" + transaction.getTypeStr() + "', "
                     "user_id = '" + std::to_string(transaction.getUserId()) + "', "
-                    "family_id = " + (transaction.getFamilyId() ? std::to_string(transaction.getFamilyId()) : "NULL") + " "
-                    "categoryId = " + std::to_string(transaction.getCategoryId()) + ", "
+                    "family_id = " + (transaction.getFamilyId() ? std::to_string(transaction.getFamilyId()) : "NULL") + ", "
+                    "category_id = " + std::to_string(transaction.getCategoryId()) + " "
                     "WHERE id = " + std::to_string(transactionId);
 
     // Выполняем SQL-запрос
@@ -176,9 +176,16 @@ vector<Transaction> TransactionRepository::getTransactionByCategoryId(int catego
 }
 
 vector<Transaction> TransactionRepository::getTransactionByUserIdCategoryId(int userId, int categoryId) {
-    std::string query = "SELECT id, description, amount, date, type, user_id, category_id, family_id FROM transactions WHERE user_id = " + std::to_string(userId) + "AND category_id = " + std::to_string(categoryId);
-    mysql_query(conn, query.c_str());
+    std::string query = "SELECT id, description, amount, date, type, user_id, category_id, family_id FROM transactions WHERE user_id = " + std::to_string(userId) + " AND category_id = " + std::to_string(categoryId);
+    if (mysql_query(conn, query.c_str())) {
+        std::cerr << "MySQL query error: " << mysql_error(conn) << std::endl;
+        return {};
+    }
     MYSQL_RES *result = mysql_store_result(conn);
+    if (result == NULL) {
+        std::cerr << "Error storing result: " << mysql_error(conn) << std::endl;
+        return {};
+    }
 
     vector<Transaction> transactions;
     MYSQL_ROW row;
@@ -205,7 +212,7 @@ vector<Transaction> TransactionRepository::getTransactionByUserIdCategoryId(int 
 }
 
 vector<Transaction> TransactionRepository::getTransactionByFamilyIdCategoryId(int familyId, int categoryId) {
-    std::string query = "SELECT id, description, amount, date, type, user_id, category_id, family_id FROM transactions WHERE family_id = " + std::to_string(familyId) + "AND category_id = " + std::to_string(categoryId);
+    std::string query = "SELECT id, description, amount, date, type, user_id, category_id, family_id FROM transactions WHERE family_id = " + std::to_string(familyId) + " AND category_id = " + std::to_string(categoryId);
     mysql_query(conn, query.c_str());
     MYSQL_RES *result = mysql_store_result(conn);
 
@@ -242,7 +249,7 @@ void TransactionRepository::clearTransactionTable() {
         if (mysql_query(conn, disable_fk_checks)) { cerr << "Error disabling foreign key checks: " << mysql_error(conn) << std::endl; }
 
         if (mysql_query(conn, truncate_table)) { cerr << "Error truncating transactions table: " << mysql_error(conn) << std::endl; }
-        else { cout << "Transactions table cleared successfully." << std::endl; }
+        else { std::clog << "Transactions table cleared successfully." << std::endl; }
 
         if (mysql_query(conn, enable_fk_checks)) { cerr << "Error enabling foreign key checks: " << mysql_error(conn) << std::endl; }
     

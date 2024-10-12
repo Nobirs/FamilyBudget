@@ -48,6 +48,7 @@ void Transaction::setAmount(int value) {
 }
 
 time_t Transaction::getDate() const { return date; }
+void Transaction::setDate(time_t value) { this->date = value; }
 void Transaction::setDate(const string& value) {
     tm tmReg = {};
     strptime(value.c_str(), "%Y-%m-%d %H:%M:%S", &tmReg);
@@ -66,7 +67,8 @@ string Transaction::getTypeStr() const {
 }
 void Transaction::setType(const string& value) {
     if(value == "INCOME") this->type = TransactionType::INCOME;
-    else this->type = TransactionType::EXPENSE;
+    else if(value == "EXPENSE") this->type = TransactionType::EXPENSE;
+    else throw std::invalid_argument("argument must be INCOME or EXPENSE");
 }
 
 int Transaction::getUserId() const { return userId; }
@@ -86,6 +88,23 @@ const string Transaction::getCategory() const {
     return categoryName;
 }
 int Transaction::getCategoryId() const { return categoryId; }
+
+void Transaction::setCategory(const string &categoryName) {
+    CategoryRepository rep;
+    Category repCategory = rep.getCategoryByNameFamilyId(categoryName, familyId);
+
+    if (repCategory.getId() == 0) {
+        std::clog << "Category '" + categoryName + "' not found in repository. Creating a new one!";
+        
+        // Create a new category:
+        Category newCategory(categoryName, "", familyId);
+        rep.addCategory(newCategory);
+        repCategory = rep.getCategoryByNameFamilyId(categoryName, familyId); 
+    }
+
+    this->categoryId = repCategory.getId();
+}
+
 void Transaction::setCategoryId(int categoryId) { this->categoryId = categoryId; }
 
 string Transaction::toString() const {
@@ -93,7 +112,7 @@ string Transaction::toString() const {
     oss << "Description: " << description 
         << ", Amount: " << (type == TransactionType::INCOME ? "+" : "-") << amount 
         << ", Date: " << std::put_time(std::localtime(&date), "%Y-%m-%d %H:%M:%S") 
-        << ", Type: " << (type == TransactionType::INCOME ? "Income" : "Expense") 
+        << ", Type: " << this->getTypeStr() 
         << ", Category: " << categoryId;
     return oss.str();
 }

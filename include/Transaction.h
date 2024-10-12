@@ -41,13 +41,13 @@ public:
     void setAmount(int value);
 
     time_t getDate() const;
+    void setDate(time_t value);
     void setDate(const string& value);
 
     TransactionType getType() const;
     string getTypeStr() const;
     void setType(const string& value);
 
-    const string getCategory() const;
 
     int getUserId() const;
     void setUserId(int newUserId);
@@ -55,7 +55,9 @@ public:
     int getFamilyId() const;
     void setFamilyId(int newFamilyId);
     
+    const string getCategory() const;
     int getCategoryId() const;
+    void setCategory(const string &categoryName);
     void setCategoryId(int categoryId);
 
     // Метод для удобного вывода транзакции
