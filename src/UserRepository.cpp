@@ -279,7 +279,7 @@ void UserRepository::clearUsersTable() {
         if (mysql_query(conn, disable_fk_checks)) { cerr << "Error disabling foreign key checks: " << mysql_error(conn) << std::endl; }
 
         if (mysql_query(conn, truncate_table)) { cerr << "Error truncating users table: " << mysql_error(conn) << std::endl; }
-        else { cout << "Users table cleared successfully." << std::endl; }
+        else { std::clog << "Users table cleared successfully." << std::endl; }
 
         if (mysql_query(conn, enable_fk_checks)) { cerr << "Error enabling foreign key checks: " << mysql_error(conn) << std::endl; }
     

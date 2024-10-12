@@ -25,14 +25,14 @@ protected:
 };
 
 
-TEST_F(UserTests, AuthenticateUser) {
+TEST_F(UserTests, AuthenticateUserTest) {
     User user("testuser", "password", UserRole::USER, "test@gmail.com");
 
     ASSERT_TRUE(user.authenticate("password"));
     ASSERT_FALSE(user.authenticate("wrongpassword"));
 }
 
-TEST_F(UserTests, ChangePassword) {
+TEST_F(UserTests, ChangePasswordTest) {
     User user("testuser", "password", UserRole::USER, "test@gmail.com");
     user.changePassword("newpassword");
 
@@ -40,7 +40,7 @@ TEST_F(UserTests, ChangePassword) {
     ASSERT_FALSE(user.authenticate("password"));
 }
 
-TEST_F(UserTests, EqualOperator) {
+TEST_F(UserTests, EqualOperatorTest) {
     User newDefaultUser{};
     User newCustomUser(
         "alex",
@@ -56,7 +56,7 @@ TEST_F(UserTests, EqualOperator) {
     ASSERT_TRUE(newCustomUser == *customUser);
 }
 
-TEST_F(UserTests, StaticCreation) {
+TEST_F(UserTests, StaticCreationTest) {
     customUser->setRegistrationDate(currentTime);
     customUser->setLastLogin(currentTime);
     User user = User::createUser(
@@ -75,7 +75,7 @@ TEST_F(UserTests, StaticCreation) {
     ASSERT_TRUE(user == *customUser);
 }
 
-TEST_F(UserTests, GetFieldsCheck) {
+TEST_F(UserTests, GetFieldsCheckTest) {
     ASSERT_EQ(customUser->getUsername(), "alex");
     ASSERT_EQ(customUser->getEmail(), "alexNobirs13@gmail.com");
     ASSERT_EQ(customUser->getRole(), UserRole::USER);
@@ -89,7 +89,7 @@ TEST_F(UserTests, GetFieldsCheck) {
     ASSERT_EQ(customUser->getPasswordHash(), User::hashPassword("testpwd123"));
 }
 
-TEST_F(UserTests, SetFieldsCheck) {
+TEST_F(UserTests, SetFieldsCheckTest) {
     customUser->setUsername("newUser");
     ASSERT_EQ(customUser->getUsername(), "newUser");
 
