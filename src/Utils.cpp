@@ -11,3 +11,15 @@ std::string formatDate(time_t rawTime) {
 
     return oss.str();  // Возвращаем строку
 }
+
+time_t stringToTimeT(const std::string& dateTimeStr) {
+    std::tm tm = {};
+    std::istringstream ss(dateTimeStr);
+    // Парсим строку в структуру tm
+    ss >> std::get_time(&tm, "%Y-%m-%d %H:%M:%S");
+    if (ss.fail()) {
+        throw std::runtime_error("Невозможно распарсить строку даты и времени");
+    }
+    // Преобразуем tm в time_t
+    return std::mktime(&tm);
+}
